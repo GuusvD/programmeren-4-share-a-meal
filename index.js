@@ -114,7 +114,7 @@ app.get("/api/meal", (req, res) => {
 })
 
 app.get("/api/meal/:id", (req, res) => {
-  const id = req.params.id
+  const id = parseInt(req.params.id)
   let meal = database.filter((item) => item.id == meal.id)
 
   if (meal.length > 0) {
