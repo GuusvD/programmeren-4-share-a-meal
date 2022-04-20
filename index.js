@@ -54,7 +54,7 @@ app.get('/api/user', (req, res) => {
   let text;
 
   for (let index = 0; index < userArray.length; index++) {
-    text += JSON.stringify(userArray[index]) + "\n"
+    text += JSON.stringify(userArray[index])
   }
 
   res.send(text)
