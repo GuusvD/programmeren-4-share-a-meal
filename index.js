@@ -39,17 +39,6 @@ app.listen(port, () => {
   console.log(`Share-a-meal app listening on port ${port}`)
 })
 
-// app.all('*', (req, res) => {
-//   console.log("Welcome!")
-
-//   res.status(200).json({
-//     status: 200,
-//     result: "Welcome!"
-//   })
-
-//   res.end()
-// })
-
 app.get('/api/user', (req, res) => {
   let text;
 
