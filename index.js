@@ -83,27 +83,27 @@ app.get('/api/user/:userId', (req, res) => {
   res.end()
 })
 
-app.post("/api/movie", (req, res) => {
-  let movie = req.body
+app.post("/api/meal", (req, res) => {
+  let meal = req.body
   id++
-  movie = {
+  meal = {
     id,
-    ...movie,
+    ...meal,
   }
-  database.push(movie)
+  database.push(meal)
 
-  console.log("Added a new Movie:")
+  console.log("Added a new Meal:")
   console.log(database)
 
   res.status(201).json({
     status: 201,
-    result: movie
+    result: meal
   })
 
   res.end()
 })
 
-app.get("/api/movie", (req, res) => {
+app.get("/api/meal", (req, res) => {
 
   res.status(200).json({
     status: 200,
@@ -113,20 +113,20 @@ app.get("/api/movie", (req, res) => {
   res.end()
 })
 
-app.get("/api/movie/:id", (req, res) => {
+app.get("/api/meal/:id", (req, res) => {
   const id = req.params.id
-  let movie = database.filter((item) => item.id == movie.id)
+  let meal = database.filter((item) => item.id == meal.id)
 
-  if (movie.length > 0) {
-    console.log(movie)
+  if (meal.length > 0) {
+    console.log(meal)
     res.status(200).json({
       status: 200,
-      result: movie
+      result: meal
     })
   } else {
     res.status(404).json ({
       status: 404,
-      result: `Movie with id ${id} not found`
+      result: `Meal with id ${id} not found`
     })
   }
 
