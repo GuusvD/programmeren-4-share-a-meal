@@ -1,0 +1,29 @@
+{
+  "name": "share-a-meal",
+  "version": "1.0.0",
+  "description": "nodejs server",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://gitlab.com/GuusvD/programmeren-4-share-a-meal.git"
+  },
+  "keywords": [
+    "nodejs",
+    "server",
+    "javascript"
+  ],
+  "author": "Guus",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://gitlab.com/GuusvD/programmeren-4-share-a-meal/issues"
+  },
+  "homepage": "https://gitlab.com/GuusvD/programmeren-4-share-a-meal#readme",
+  "dependencies": {
+    "body-parser": "^1.20.0",
+    "express": "^4.17.3"
+  }
+}
