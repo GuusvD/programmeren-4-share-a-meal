@@ -39,20 +39,22 @@ app.listen(port, () => {
   console.log(`Share-a-meal app listening on port ${port}`)
 })
 
-app.get('/api/user', (req, res) => {
-  let text;
+// //Get all users
+// app.get('/api/user', (req, res) => {
+//   let text;
 
-  for (let index = 0; index < userArray.length; index++) {
-    text += JSON.stringify(userArray[index])
-  }
+//   for (let index = 0; index < userArray.length; index++) {
+//     text += JSON.stringify(userArray[index])
+//   }
 
-  res.send(text)
+//   res.send(text)
 
-  console.log("Got all the Users")
+//   console.log("Got all the Users")
 
-  res.end()
-})
+//   res.end()
+// })
 
+//Get user profile
 app.get('/api/user/profile', (req, res) => {
   console.log("Got the User profile")
   res.send("Got the User profile")
@@ -60,6 +62,7 @@ app.get('/api/user/profile', (req, res) => {
   res.end()
 })
 
+//Get user by id
 app.get('/api/user/:userId', (req, res) => {
   if (req.params.userId > userArray.length - 1) {
     console.log("Couldn't find the User")
@@ -72,21 +75,22 @@ app.get('/api/user/:userId', (req, res) => {
   res.end()
 })
 
-app.post("/api/meal", (req, res) => {
-  let meal = req.body
+//Register a new user
+app.post("/api/user", (req, res) => {
+  let user = req.body
   id++
-  meal = {
+  user = {
     id,
-    ...meal,
+    ...user,
   }
-  database.push(meal)
+  database.push(user)
 
-  console.log("Added a new Meal:")
+  console.log("Added a new User:")
   console.log(database)
 
   res.status(201).json({
     status: 201,
-    result: meal
+    result: user
   })
 
   res.end()
