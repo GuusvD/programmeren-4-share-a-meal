@@ -14,103 +14,126 @@ app.listen(port, () => {
   console.log(`Share-a-meal app listening on port ${port}`)
 })
 
-// //Get all users
-// app.get('/api/user', (req, res) => {
-//   let text;
-
-//   for (let index = 0; index < userArray.length; index++) {
-//     text += JSON.stringify(userArray[index])
-//   }
-
-//   res.send(text)
-
-//   console.log("Got all the Users")
-
-//   res.end()
-// })
-
 //Get user profile
 app.get('/api/user/profile', (req, res) => {
-  console.log("Got the User profile")
-  res.send("Got the User profile")
+  res.send("This function has not yet been implemented")
 
+  console.log("Not implemented")
   res.end()
 })
 
 //Get user by id
-app.get('/api/user/:userId', (req, res) => {
-  if (req.params.userId > userArray.length - 1) {
-    console.log("Couldn't find the User")
-    res.send("Couldn't find the User")
-  } else {
-    res.send(userArray[req.params.userId])
-    console.log("Got the User by id")
-  }
+app.get('/api/user/:id', (req, res) => {
+  const id = req.params.id
+  let user = database.filter((item) => item.id == id)
 
-  res.end()
+  if (user.length > 0) {
+    res.status(200).json({
+      status: 200,
+      result: user
+    })
+
+    console.log("Got the user by id")
+  } else {
+    res.status(401).json({
+      status: 404,
+      result: `User with id ${id} not found`
+    })
+
+    console.log("Couldn't find a user with that id")
+  }
 })
 
 //Register a new user
 app.post("/api/user", (req, res) => {
   let user = req.body
-  id++
-  user = {
-    id,
-    ...user,
+  
+  if (user.length > 0) {
+    id++
+
+    user = {
+      id,
+      ...user,
+    }
+
+    database.push(user)
+
+    res.status(201).json({
+      status: 201,
+      result: user
+    })
+
+    console.log("Added a new user:")
+    console.log(user)
+  } else {
+    res.status(400).json({
+      status: 400,
+      message: "No saveable user data"
+    })
+
+    console.log("No user data")
   }
-  database.push(user)
-
-  console.log("Added a new User:")
-  console.log(database)
-
-  res.status(201).json({
-    status: 201,
-    result: user
-  })
 
   res.end()
 })
 
+//Get all users
 app.get("/api/user", (req, res) => {
 
-  res.status(200).json({
-    status: 200,
-    result: database
-  })
-
-  res.end()
-})
-
-app.get("/api/meal/:id", (req, res) => {
-  const id = req.params.id
-  let meal = database.filter((item) => item.id == id)
-
-  if (meal.length > 0) {
-    console.log(meal)
+  if (database.length > 0) {
     res.status(200).json({
       status: 200,
-      result: meal
+      result: database
     })
+
+    console.log("Got all the users")
   } else {
-    res.status(404).json ({
+    res.status(404).json({
       status: 404,
-      result: `Meal with id ${id} not found`
+      message: "Database is empty"
     })
   }
+  res.end()
+})
+
+//Update a user
+app.put("/api/user/:id", (req, res) => {
+
+
+  console.log("Updated a user by id")
+  res.send("Updated a user by id")
 
   res.end()
 })
 
-app.put("/api/user", (req, res) => {
-  console.log("Updated a User by id")
-  res.send("Updated a User by id")
+//Delete a user
+app.delete("/api/user/:id", (req, res) => {
+  const id = req.params.id
+  let boolean = "N"
 
-  res.end()
-})
+  database.forEach(element => {
+    if (element.id == id) {
+      boolean = "Y"
+    }
+  });
 
-app.delete("/api/user", (req, res) => {
-  console.log("Deleted a User by id")
-  res.send("Deleted a User by id")
+  if (boolean == "Y") {
+    database.indexOf.filter((item) => item.id == id) = null;
+
+    res.status(200).json({
+      status: 200,
+      message: "Deleted the user"
+    })
+
+    console.log("Deleted a user by id")
+  } else {
+    res.status(404).json({
+      status: 404,
+      message: "Couldn't find the user"
+    })
+
+    console.log("Couldn't find the user")
+  }
 
   res.end()
 })
