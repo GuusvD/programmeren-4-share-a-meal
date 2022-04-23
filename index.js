@@ -4,31 +4,6 @@ const res = require('express/lib/response')
 const app = express()
 const port = process.env.PORT || 3000
 
-let userArray = [
-  {
-    id: 0,
-    firstName: "John",
-    lastName: "Doe",
-    street: "Lovensdijkstraat 61",
-    city: "Breda",
-    isActive: true,
-    emailAdress: "j.doe@server/com",
-    password: "secret",
-    phoneNumber: "06 12345678"
-  },
-  {
-    id: 1,
-    firstName: "Rob",
-    lastName: "Doe",
-    street: "Hogeschoollaan 10",
-    city: "Breda",
-    isActive: false,
-    emailAdress: "r.doe@server/com",
-    password: "terces",
-    phoneNumber: "06 87654321"
-  }
-]
-
 const bodyparser = require("body-parser")
 app.use(bodyparser.json())
 
