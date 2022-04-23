@@ -98,10 +98,30 @@ app.get("/api/user", (req, res) => {
 
 //Update a user
 app.put("/api/user/:id", (req, res) => {
+  const id = req.params.id
+  let boolean = false
 
+  database.forEach(element => {
+    if (element.id == id) {
+      boolean = true
+    }
+  });
 
-  console.log("Updated a user by id")
-  res.send("Updated a user by id")
+  if (boolean == true) {
+    res.status(200).json({
+      status: 200,
+      message: "Updated the user"
+    })
+
+    console.log("Updated a user by id")
+  } else {
+    res.status(404).json({
+      status: 404,
+      message: "Couldn't find the user"
+    })
+
+    console.log("Couldn't find the user")
+  }
 
   res.end()
 })
@@ -109,16 +129,16 @@ app.put("/api/user/:id", (req, res) => {
 //Delete a user
 app.delete("/api/user/:id", (req, res) => {
   const id = req.params.id
-  let boolean = "N"
+  let boolean = false
 
   database.forEach(element => {
     if (element.id == id) {
-      boolean = "Y"
+      boolean = true
     }
   });
 
-  if (boolean == "Y") {
-    database.indexOf.filter((item) => item.id == id) = null;
+  if (boolean == true) {
+    database.indexOf.filter((item) => item.id == id) = null
 
     res.status(200).json({
       status: 200,
