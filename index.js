@@ -96,7 +96,7 @@ app.post("/api/user", (req, res) => {
   res.end()
 })
 
-app.get("/api/meal", (req, res) => {
+app.get("/api/user", (req, res) => {
 
   res.status(200).json({
     status: 200,
