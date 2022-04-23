@@ -37,7 +37,7 @@ app.get('/api/user/:id', (req, res) => {
   } else {
     res.status(401).json({
       status: 404,
-      result: `User with id ${id} not found`
+      message: `User with id ${id} not found`
     })
 
     console.log("Couldn't find a user with that id")
@@ -60,7 +60,7 @@ app.post("/api/user", (req, res) => {
 
     res.status(201).json({
       status: 201,
-      result: user
+      message: "Added a new user"
     })
 
     console.log("Added a new user:")
@@ -71,7 +71,7 @@ app.post("/api/user", (req, res) => {
       message: "No saveable user data"
     })
 
-    console.log("No user data")
+    console.log("No saveable user data")
   }
 
   res.end()
