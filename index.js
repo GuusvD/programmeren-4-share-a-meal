@@ -35,36 +35,56 @@ app.get('/api/user/:id', (req, res) => {
 
     console.log("Got the user by id")
   } else {
-    res.status(401).json({
+    res.status(404).json({
       status: 404,
       message: `User with id ${id} not found`
     })
 
-    console.log("Couldn't find a user with that id")
+    console.log(`User with id ${id} not found`)
   }
 })
 
 //Register a new user
 app.post("/api/user", (req, res) => {
   let user = req.body
-  
-  if (user.length > 0) {
-    id++
+  let boolean = false
+
+  if (!(Object.keys(req.body).length === 0)) {
+    if (database.length == 0) {
+      id = 1
+    } else {
+      id = database[database.length - 1].id + 1
+    }
 
     user = {
       id,
       ...user,
     }
 
-    database.push(user)
+    database.forEach(element => {
+      if (element.emailAdress == user.emailAdress) {
+        res.status(409).json({
+          status: 409,
+          message: "Emailadress already taken"
+        })
 
-    res.status(201).json({
-      status: 201,
-      message: "Added a new user"
+        boolean = true
+
+        console.log("Emailadress already taken")
+      }
     })
 
-    console.log("Added a new user:")
-    console.log(user)
+    if (boolean == false) {
+      database.push(user)
+
+      res.status(201).json({
+        status: 201,
+        result: user
+      })
+  
+      console.log("Added a new user:")
+      console.log(user)
+    }
   } else {
     res.status(400).json({
       status: 400,
@@ -88,8 +108,8 @@ app.get("/api/user", (req, res) => {
 
     console.log("Got all the users")
   } else {
-    res.status(404).json({
-      status: 404,
+    res.status(200).json({
+      status: 200,
       message: "Database is empty"
     })
   }
@@ -99,15 +119,33 @@ app.get("/api/user", (req, res) => {
 //Update a user
 app.put("/api/user/:id", (req, res) => {
   const id = req.params.id
-  let boolean = false
+  let existingId = false
+  let uniqueEmail = true
+  let user = req.body
 
   database.forEach(element => {
     if (element.id == id) {
-      boolean = true
+      existingId = true
     }
-  });
+  })
 
-  if (boolean == true) {
+  database.forEach(element => {
+    if (element.emailAdress == user.emailAdress && element.id != id) {
+      uniqueEmail = false
+    }
+  })
+
+  if (existingId == true && uniqueEmail == true && !(Object.keys(req.body).length === 0)) {
+    database.forEach(element => {
+      if (element.id == id) {
+        let index = database.indexOf(element)
+        database[index] = user = {
+          id,
+          ...user
+        }
+      }
+    })
+
     res.status(200).json({
       status: 200,
       message: "Updated the user"
@@ -115,12 +153,28 @@ app.put("/api/user/:id", (req, res) => {
 
     console.log("Updated a user by id")
   } else {
-    res.status(404).json({
-      status: 404,
-      message: "Couldn't find the user"
-    })
+    if (Object.keys(req.body).length === 0) {
+      res.status(400).json({
+        status: 400,
+        message: "No saveable user data"
+      })
 
-    console.log("Couldn't find the user")
+      console.log("No saveable user data")
+    } else if (uniqueEmail == false) {
+      res.status(409).json({
+        status: 409,
+        message: "Emailadress already taken"
+      })
+
+      console.log("Emailadress already taken")
+    } else if (existingId == false) {
+      res.status(404).json({
+        status: 404,
+        message: `User with id ${id} not found`
+      })
+  
+      console.log(`User with id ${id} not found`)
+    }
   }
 
   res.end()
@@ -135,10 +189,10 @@ app.delete("/api/user/:id", (req, res) => {
     if (element.id == id) {
       boolean = true
     }
-  });
+  })
 
   if (boolean == true) {
-    database.indexOf.filter((item) => item.id == id) = null
+    database = database.filter((item) => item.id != id)
 
     res.status(200).json({
       status: 200,
@@ -149,10 +203,10 @@ app.delete("/api/user/:id", (req, res) => {
   } else {
     res.status(404).json({
       status: 404,
-      message: "Couldn't find the user"
+      message: `User with id ${id} not found`
     })
 
-    console.log("Couldn't find the user")
+    console.log(`User with id ${id} not found`)
   }
 
   res.end()
