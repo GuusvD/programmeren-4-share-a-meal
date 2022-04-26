@@ -6,7 +6,7 @@ let id = 0
 let controller = {
     validateUser: (req, res, next) => {
         let user = req.body
-        let {firstName, lastName, emailAdress} = user
+        let { firstName, lastName, emailAdress } = user
 
         try {
             assert(typeof firstName === "string", "Firstname must be a string!")
@@ -15,11 +15,13 @@ let controller = {
 
             next()
         } catch (error) {
+            // const errorFinal = {
+            //     status: 400,
+            //     message: error.message
+            // }
+            // next(errorFinal)
             console.log(error.message)
-            res.status(400).json({
-                status: 400,
-                message: error.toString()
-            })
+            res.send(error.message)
         }
     },
     addUser: (req, res) => {
@@ -107,6 +109,8 @@ let controller = {
             })
 
             console.log(`User with id ${id} not found`)
+
+            // console.log(errorFinal)
         }
     },
     getUserProfile: (req, res) => {

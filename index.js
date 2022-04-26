@@ -8,8 +8,13 @@ const userRouter = require('./src/routes/user.routes')
 const bodyparser = require("body-parser")
 app.use(bodyparser.json())
 
+app.use(userRouter)
+
 app.listen(port, () => {
   console.log(`Share-a-meal app listening on port ${port}`)
 })
 
-app.use(userRouter)
+//Error handling
+app.use((err, req, res, next) => {
+  res.status(err.status).json(err)
+})
