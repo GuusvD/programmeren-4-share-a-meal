@@ -1,7 +1,27 @@
+const assert = require('assert')
+
 let database = []
 let id = 0
 
 let controller = {
+    validateUser: (req, res, next) => {
+        let user = req.body
+        let {firstName, lastName, emailAdress} = user
+
+        try {
+            assert(typeof firstName === "string", "Firstname must be a string!")
+            assert(typeof lastName === "string", "Lastname must be a string!")
+            assert(typeof emailAdress === "string", "Emailadress must be a string!")
+
+            next()
+        } catch (error) {
+            console.log(error.message)
+            res.status(400).json({
+                status: 400,
+                message: error.toString()
+            })
+        }
+    },
     addUser: (req, res) => {
         let user = req.body
         let boolean = false
