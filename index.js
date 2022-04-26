@@ -18,3 +18,5 @@ app.listen(port, () => {
 app.use((err, req, res, next) => {
   res.status(err.status).json(err)
 })
+
+module.exports = app

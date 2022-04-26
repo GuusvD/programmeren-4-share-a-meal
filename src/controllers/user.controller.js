@@ -15,13 +15,11 @@ let controller = {
 
             next()
         } catch (error) {
-            // const errorFinal = {
-            //     status: 400,
-            //     message: error.message
-            // }
-            // next(errorFinal)
-            console.log(error.message)
-            res.send(error.message)
+            const errorFinal = {
+                status: 400,
+                message: error.message
+            }
+            next(errorFinal)
         }
     },
     addUser: (req, res) => {
@@ -109,8 +107,6 @@ let controller = {
             })
 
             console.log(`User with id ${id} not found`)
-
-            // console.log(errorFinal)
         }
     },
     getUserProfile: (req, res) => {
