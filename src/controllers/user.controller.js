@@ -206,7 +206,7 @@ let controller = {
         }
 
         res.end()
-    }
+    },
 }
 
 module.exports = controller
