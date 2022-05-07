@@ -75,19 +75,20 @@ let controller = {
         })
     },
     getAllUsers: (req, res) => {
-        if (database.length > 0) {
-            res.status(200).json({
-                status: 200,
-                result: database
-            })
+        dbconnection.getConnection(function (err, connection) {
+            if (err) throw err
 
-            console.log("Got all the users")
-        } else {
-            res.status(200).json({
-                status: 200,
-                message: "Database is empty"
+            connection.query('SELECT * FROM user', function (error, results, fields) {
+                connection.release()
+
+                if (error) throw error
+
+                res.status(200).json({
+                    status: 200,
+                    result: results
+                })
             })
-        }
+        })
     },
     getUserById: (req, res) => {
         const id = req.params.id
@@ -201,7 +202,7 @@ let controller = {
 
             console.log(`User with id ${id} not found`)
         }
-    },
+    }
 }
 
 module.exports = controller
