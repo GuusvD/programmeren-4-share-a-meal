@@ -201,7 +201,7 @@ let controller = {
 
             console.log(`User with id ${id} not found`)
         }
-    },
+    }
 }
 
 module.exports = controller
