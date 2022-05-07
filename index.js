@@ -16,6 +16,14 @@ app.listen(port, () => {
   console.log(`Share-a-meal app listening on port ${port}`)
 })
 
+//Response for all non-existent end-points
+app.all('*', (req, res) => {
+  res.status(401).json({
+    status: 401,
+    message: 'End-point not found'
+  })
+})
+
 //Error handling
 app.use((err, req, res, next) => {
   res.status(err.status).json(err)
