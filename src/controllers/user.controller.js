@@ -111,9 +111,10 @@ let controller = {
         }
     },
     getUserProfile: (req, res) => {
-        res.send("This function has not yet been implemented")
-
-        console.log("Not implemented")
+        res.status(501).json({
+            status: 501,
+            message: 'This function has not been implemented yet'
+        })
     },
     updateUser: (req, res) => {
         const id = req.params.id
