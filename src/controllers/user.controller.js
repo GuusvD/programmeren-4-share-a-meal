@@ -1,16 +1,20 @@
 const assert = require('assert')
+const dbconnection = require('../../database/dbconnection')
 
 let database = []
-let id = 0
+let id = 5
 
 let controller = {
     validateUser: (req, res, next) => {
         let user = req.body
-        let { firstName, lastName, emailAdress } = user
+        let { firstName, lastName, street, city, password, emailAdress } = user
 
         try {
             assert(typeof firstName === "string", "Firstname must be a string!")
             assert(typeof lastName === "string", "Lastname must be a string!")
+            assert(typeof street === "string", "Street must be a string!")
+            assert(typeof city === "string", "City must be a string!")
+            assert(typeof password === "string", "Password must be a string!")
             assert(typeof emailAdress === "string", "Emailadress must be a string!")
 
             next()
@@ -26,52 +30,49 @@ let controller = {
         let user = req.body
         let boolean = false
 
-        if (!(Object.keys(req.body).length === 0)) {
-            if (database.length == 0) {
-                id = 1
-            } else {
-                id = database[database.length - 1].id + 1
-            }
-
-            user = {
-                id,
-                ...user,
-            }
-
-            database.forEach(element => {
-                if (element.emailAdress == user.emailAdress) {
-                    res.status(409).json({
-                        status: 409,
-                        message: "Emailadress already taken"
-                    })
-
-                    boolean = true
-
-                    console.log("Emailadress already taken")
-                }
-            })
-
-            if (boolean == false) {
-                database.push(user)
-
-                res.status(201).json({
-                    status: 201,
-                    result: user
-                })
-
-                console.log("Added a new user:")
-                console.log(user)
-            }
-        } else {
-            res.status(400).json({
-                status: 400,
-                message: "No saveable user data"
-            })
-
-            console.log("No saveable user data")
+        id++
+        user = {
+            id,
+            ...user,
         }
 
-        res.end()
+        dbconnection.getConnection(function (err, connection) {
+            if (err) throw err
+
+            connection.query('SELECT * FROM user', function (error, results, fields) {
+                connection.release()
+
+                if (error) throw error
+
+                results.forEach(element => {
+                    if (element.emailAdress === user.emailAdress) {
+                        boolean = true
+                    }
+                })
+
+                if (boolean == false) {
+                    dbconnection.getConnection(function (err, connection) {
+                        if (err) throw err
+
+                        connection.query(`INSERT INTO user (id, firstName, lastName, street, city, password, emailAdress) VALUES ('${user.id}', '${user.firstName}', '${user.lastName}', '${user.street}', '${user.city}', '${user.password}', '${user.emailAdress}')`, function (error, results, fields) {
+                            connection.release()
+
+                            if (error) throw error
+
+                            res.status(200).json({
+                                status: 200,
+                                result: user
+                            })
+                        })
+                    })
+                } else {
+                    res.status(409).json({
+                        status: 409,
+                        message: 'Emailadress already taken'
+                    })
+                }
+            })
+        })
     },
     getAllUsers: (req, res) => {
         if (database.length > 0) {
@@ -87,7 +88,6 @@ let controller = {
                 message: "Database is empty"
             })
         }
-        res.end()
     },
     getUserById: (req, res) => {
         const id = req.params.id
@@ -113,7 +113,6 @@ let controller = {
         res.send("This function has not yet been implemented")
 
         console.log("Not implemented")
-        res.end()
     },
     updateUser: (req, res) => {
         const id = req.params.id
@@ -174,8 +173,6 @@ let controller = {
                 console.log(`User with id ${id} not found`)
             }
         }
-
-        res.end()
     },
     deleteUser: (req, res) => {
         const id = req.params.id
@@ -204,8 +201,6 @@ let controller = {
 
             console.log(`User with id ${id} not found`)
         }
-
-        res.end()
     },
 }
 
