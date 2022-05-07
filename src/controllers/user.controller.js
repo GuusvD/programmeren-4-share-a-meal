@@ -92,23 +92,28 @@ let controller = {
     },
     getUserById: (req, res) => {
         const id = req.params.id
-        let user = database.filter((item) => item.id == id)
 
-        if (user.length > 0) {
-            res.status(200).json({
-                status: 200,
-                result: user
+        dbconnection.getConnection(function (err, connection) {
+            if (err) throw err
+
+            connection.query(`SELECT * FROM user WHERE id = ${id}`, function (error, results, fields) {
+                connection.release()
+
+                if (error) throw error
+
+                if (results.length == 0) {
+                    res.status(404).json({
+                        status: 404,
+                        message: `User with id ${id} not found`
+                    })
+                } else {
+                    res.status(200).json({
+                        status: 200,
+                        result: results
+                    })
+                }
             })
-
-            console.log("Got the user by id")
-        } else {
-            res.status(404).json({
-                status: 404,
-                message: `User with id ${id} not found`
-            })
-
-            console.log(`User with id ${id} not found`)
-        }
+        })
     },
     getUserProfile: (req, res) => {
         res.status(501).json({
