@@ -2,6 +2,9 @@ const express = require('express')
 const router = express.Router()
 const userController = require('../controllers/user.controller')
 
+//Get user profile
+router.get('/api/user/profile', userController.getUserProfile)
+
 //Get user by id
 router.get('/api/user/:id', userController.getUserById)
 
@@ -10,9 +13,6 @@ router.post("/api/user", userController.validateUser, userController.addUser)
 
 //Get all users
 router.get("/api/user", userController.getAllUsers)
-
-//Get user profile
-router.get('/api/user/profile', userController.getUserProfile)
 
 //Update a user
 router.put("/api/user/:id", userController.updateUser)
