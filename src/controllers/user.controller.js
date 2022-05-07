@@ -75,44 +75,51 @@ let controller = {
         })
     },
     getAllUsers: (req, res) => {
-        if (database.length > 0) {
-            res.status(200).json({
-                status: 200,
-                result: database
-            })
+        dbconnection.getConnection(function (err, connection) {
+            if (err) throw err
 
-            console.log("Got all the users")
-        } else {
-            res.status(200).json({
-                status: 200,
-                message: "Database is empty"
+            connection.query('SELECT * FROM user', function (error, results, fields) {
+                connection.release()
+
+                if (error) throw error
+
+                res.status(200).json({
+                    status: 200,
+                    result: results
+                })
             })
-        }
+        })
     },
     getUserById: (req, res) => {
         const id = req.params.id
-        let user = database.filter((item) => item.id == id)
 
-        if (user.length > 0) {
-            res.status(200).json({
-                status: 200,
-                result: user
+        dbconnection.getConnection(function (err, connection) {
+            if (err) throw err
+
+            connection.query(`SELECT * FROM user WHERE id = ${id}`, function (error, results, fields) {
+                connection.release()
+
+                if (error) throw error
+
+                if (results.length == 0) {
+                    res.status(404).json({
+                        status: 404,
+                        message: `User with id ${id} not found`
+                    })
+                } else {
+                    res.status(200).json({
+                        status: 200,
+                        result: results
+                    })
+                }
             })
-
-            console.log("Got the user by id")
-        } else {
-            res.status(404).json({
-                status: 404,
-                message: `User with id ${id} not found`
-            })
-
-            console.log(`User with id ${id} not found`)
-        }
+        })
     },
     getUserProfile: (req, res) => {
-        res.send("This function has not yet been implemented")
-
-        console.log("Not implemented")
+        res.status(501).json({
+            status: 501,
+            message: 'This function has not been implemented yet'
+        })
     },
     updateUser: (req, res) => {
         const id = req.params.id
@@ -201,7 +208,7 @@ let controller = {
 
             console.log(`User with id ${id} not found`)
         }
-    },
+    }
 }
 
 module.exports = controller
