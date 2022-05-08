@@ -291,31 +291,45 @@ let controller = {
     },
     deleteUser: (req, res) => {
         const id = req.params.id
-        let boolean = false
+        let existingId = false
 
-        database.forEach(element => {
-            if (element.id == id) {
-                boolean = true
-            }
+        dbconnection.getConnection(function (err, connection) {
+            if (err) throw err
+
+            connection.query('SELECT * FROM user', function (error, results, fields) {
+                connection.release()
+
+                if (error) throw error
+
+                results.forEach(element => {
+                    if (element.id == id) {
+                        existingId = true
+                    }
+                })
+
+                if (existingId == true) {
+                    dbconnection.getConnection(function (err, connection) {
+                        if (err) throw err
+
+                        connection.query(`DELETE FROM user WHERE id = ${id}`, function (error, results, fields) {
+                            connection.release()
+
+                            if (error) throw error
+
+                            res.status(200).json({
+                                status: 200,
+                                message: "Deleted the user"
+                            })
+                        })
+                    })
+                } else {
+                    res.status(404).json({
+                        status: 404,
+                        message: `User with id ${id} not found`
+                    })
+                }
+            })
         })
-
-        if (boolean == true) {
-            database = database.filter((item) => item.id != id)
-
-            res.status(200).json({
-                status: 200,
-                message: "Deleted the user"
-            })
-
-            console.log("Deleted a user by id")
-        } else {
-            res.status(404).json({
-                status: 404,
-                message: `User with id ${id} not found`
-            })
-
-            console.log(`User with id ${id} not found`)
-        }
     }
 }
 
