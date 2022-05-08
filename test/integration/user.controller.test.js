@@ -197,4 +197,30 @@ describe('Manage users', () => {
         //         })
         // })
     })
+
+    describe('UC-203 Gebruikersprofiel opvragen', () => {
+        // it('TC-203-1: Ongeldige token', (done) => {
+        //     chai
+        //         .request(server)
+        //         .get('/api/user')
+        //         .end((err, res) => {
+        //             res.should.be.an('object')
+        //             let { status } = res.body
+        //             status.should.equals(404)
+        //             done()
+        //         })
+        // })
+
+        // it('TC-203-2: Valide token en gebruiker bestaat', (done) => {
+        //     chai
+        //         .request(server)
+        //         .get('/api/user')
+        //         .end((err, res) => {
+        //             res.should.be.an('object')
+        //             let { status } = res.body
+        //             status.should.equals(200)
+        //             done()
+        //         })
+        // })
+    })
 })
