@@ -1,7 +1,6 @@
 const assert = require('assert')
 const dbconnection = require('../../database/dbconnection')
 
-let database = []
 let id = 5
 
 let controller = {
@@ -127,59 +126,168 @@ let controller = {
         let uniqueEmail = true
         let user = req.body
 
-        database.forEach(element => {
-            if (element.id == id) {
-                existingId = true
-            }
-        })
+        dbconnection.getConnection(function (err, connection) {
+            if (err) throw err
 
-        database.forEach(element => {
-            if (element.emailAdress == user.emailAdress && element.id != id) {
-                uniqueEmail = false
-            }
-        })
+            connection.query(`SELECT * FROM user WHERE id = ${id}`, function (error, results, fields) {
+                connection.release()
 
-        if (existingId == true && uniqueEmail == true && !(Object.keys(req.body).length === 0)) {
-            database.forEach(element => {
-                if (element.id == id) {
-                    let index = database.indexOf(element)
-                    database[index] = user = {
-                        id,
-                        ...user
-                    }
+                if (error) throw error
+
+                if (results.length != 0) {
+                    existingId = true
                 }
+
+                dbconnection.getConnection(function (err, connection) {
+                    if (err) throw err
+
+                    connection.query('SELECT * FROM user', function (error, results, fields) {
+                        connection.release()
+
+                        if (error) throw error
+
+                        results.forEach(element => {
+                            if (element.emailAdress == user.emailAdress && element.id != id) {
+                                uniqueEmail = false
+                            }
+                        })
+
+                        if (existingId == true && uniqueEmail == true && !(Object.keys(req.body).length === 0)) {
+                            if (user.firstName) {
+                                dbconnection.getConnection(function (err, connection) {
+                                    if (err) throw err
+
+                                    connection.query(`UPDATE user SET firstName = '${user.firstName}' WHERE id = ${id}`, function (error, results, fields) {
+                                        connection.release()
+
+                                        if (error) throw error
+                                    })
+                                })
+                            }
+
+                            if (user.lastName) {
+                                dbconnection.getConnection(function (err, connection) {
+                                    if (err) throw err
+
+                                    connection.query(`UPDATE user SET lastName = '${user.lastName}' WHERE id = ${id}`, function (error, results, fields) {
+                                        connection.release()
+
+                                        if (error) throw error
+                                    })
+                                })
+                            }
+
+                            if (user.isActive) {
+                                dbconnection.getConnection(function (err, connection) {
+                                    if (err) throw err
+
+                                    connection.query(`UPDATE user SET isActive = '${user.isActive}' WHERE id = ${id}`, function (error, results, fields) {
+                                        connection.release()
+
+                                        if (error) throw error
+                                    })
+                                })
+                            }
+
+                            if (user.emailAdress) {
+                                dbconnection.getConnection(function (err, connection) {
+                                    if (err) throw err
+
+                                    connection.query(`UPDATE user SET emailAdress = '${user.emailAdress}' WHERE id = ${id}`, function (error, results, fields) {
+                                        connection.release()
+
+                                        if (error) throw error
+                                    })
+                                })
+                            }
+
+                            if (user.password) {
+                                dbconnection.getConnection(function (err, connection) {
+                                    if (err) throw err
+
+                                    connection.query(`UPDATE user SET password = '${user.password}' WHERE id = ${id}`, function (error, results, fields) {
+                                        connection.release()
+
+                                        if (error) throw error
+                                    })
+                                })
+                            }
+
+                            if (user.phoneNumber) {
+                                dbconnection.getConnection(function (err, connection) {
+                                    if (err) throw err
+
+                                    connection.query(`UPDATE user SET phoneNumber = '${user.phoneNumber}' WHERE id = ${id}`, function (error, results, fields) {
+                                        connection.release()
+
+                                        if (error) throw error
+                                    })
+                                })
+                            }
+
+                            if (user.roles) {
+                                dbconnection.getConnection(function (err, connection) {
+                                    if (err) throw err
+
+                                    connection.query(`UPDATE user SET roles = '${user.roles}' WHERE id = ${id}`, function (error, results, fields) {
+                                        connection.release()
+
+                                        if (error) throw error
+                                    })
+                                })
+                            }
+
+                            if (user.street) {
+                                dbconnection.getConnection(function (err, connection) {
+                                    if (err) throw err
+
+                                    connection.query(`UPDATE user SET street = '${user.street}' WHERE id = ${id}`, function (error, results, fields) {
+                                        connection.release()
+
+                                        if (error) throw error
+                                    })
+                                })
+                            }
+
+                            if (user.city) {
+                                dbconnection.getConnection(function (err, connection) {
+                                    if (err) throw err
+
+                                    connection.query(`UPDATE user SET city = '${user.city}' WHERE id = ${id}`, function (error, results, fields) {
+                                        connection.release()
+
+                                        if (error) throw error
+                                    })
+                                })
+                            }
+
+                            res.status(200).json({
+                                status: 200,
+                                message: "Updated the user"
+                            })
+
+                        } else {
+                            if (Object.keys(req.body).length === 0) {
+                                res.status(400).json({
+                                    status: 400,
+                                    message: "No saveable user data"
+                                })
+                            } else if (uniqueEmail == false) {
+                                res.status(409).json({
+                                    status: 409,
+                                    message: "Emailadress already taken"
+                                })
+                            } else if (existingId == false) {
+                                res.status(404).json({
+                                    status: 404,
+                                    message: `User with id ${id} not found`
+                                })
+                            }
+                        }
+                    })
+                })
             })
-
-            res.status(200).json({
-                status: 200,
-                message: "Updated the user"
-            })
-
-            console.log("Updated a user by id")
-        } else {
-            if (Object.keys(req.body).length === 0) {
-                res.status(400).json({
-                    status: 400,
-                    message: "No saveable user data"
-                })
-
-                console.log("No saveable user data")
-            } else if (uniqueEmail == false) {
-                res.status(409).json({
-                    status: 409,
-                    message: "Emailadress already taken"
-                })
-
-                console.log("Emailadress already taken")
-            } else if (existingId == false) {
-                res.status(404).json({
-                    status: 404,
-                    message: `User with id ${id} not found`
-                })
-
-                console.log(`User with id ${id} not found`)
-            }
-        }
+        })
     },
     deleteUser: (req, res) => {
         const id = req.params.id
