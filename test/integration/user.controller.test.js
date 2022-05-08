@@ -223,4 +223,46 @@ describe('Manage users', () => {
         //         })
         // })
     })
+
+    describe('UC-204 Details van gebruiker', () => {
+        // it('TC-204-1: Ongeldig token', (done) => {
+        //     chai
+        //         .request(server)
+        //         .get('/api/user')
+        //         .end((err, res) => {
+        //             res.should.be.an('object')
+        //             let { status } = res.body
+        //             status.should.equals(404)
+        //             done()
+        //         })
+        // })
+
+        // it('TC-204-2: Gebruiker-ID bestaat niet', (done) => {
+        //     chai
+        //         .request(server)
+        //         //Non-existent user-id "0"
+        //         .get('/api/user/0')
+        //         .end((err, res) => {
+        //             res.should.be.an('object')
+        //             let { status, message } = res.body
+        //             status.should.equals(404)
+        //             message.should.be.an('string').that.equals('User with id 0 not found')
+        //             done()
+        //         })
+        // })
+
+        // it('TC-204-3: Gebruiker-ID bestaat', (done) => {
+        //     chai
+        //         .request(server)
+        //         //Existing user-id "1"
+        //         .get('/api/user/1')
+        //         .end((err, res) => {
+        //             res.should.be.an('object')
+        //             let { status, result } = res.body
+        //             status.should.equals(200)
+        //             result.length.should.equals(1)
+        //             done()
+        //         })
+        // })
+    })
 })
