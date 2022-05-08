@@ -10,14 +10,14 @@ jobs:
         runs-on: ubuntu-latest
         env:
             DB_HOST: localhost
-            DB_PORT: 3306
+            DB_PORT: 3000
             DB_DATABASE: share_a_meal
             DB_USER: root
         services:
             mysql:
                 image: mysql:5.7
                 ports:
-                    - 3306
+                    - 3000
         steps:
             - uses: actions/checkout@v2
 
