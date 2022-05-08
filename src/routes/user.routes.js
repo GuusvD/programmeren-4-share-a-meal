@@ -15,7 +15,7 @@ router.post("/api/user", userController.validateUser, userController.addUser)
 router.get("/api/user", userController.getAllUsers)
 
 //Update a user
-router.put("/api/user/:id", userController.updateUser)
+router.put("/api/user/:id", userController.validateUser, userController.updateUser)
 
 //Delete a user
 router.delete("/api/user/:id", userController.deleteUser)
