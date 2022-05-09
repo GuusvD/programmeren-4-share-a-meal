@@ -11,14 +11,14 @@ let controller = {
 
         try {
             assert(typeof firstName === "string", "Firstname must be a string!")
-            assert(typeof isActive === "boolean", "Is active must be a boolean!")
-            assert(typeof roles === "string", "Roles must be a string!")
+            
+            
             assert(typeof lastName === "string", "Lastname must be a string!")
             assert(typeof street === "string", "Street must be a string!")
             assert(typeof city === "string", "City must be a string!")
             assert(typeof password === "string", "Password must be a string!")
             assert(typeof emailAdress === "string", "Emailadress must be a string!")
-            assert(typeof phoneNumber === "string", "Phonenumber must be a string!")
+            
             assert(MailChecker.isValid(emailAdress), "Emailadress is not valid!")
 
             next()
