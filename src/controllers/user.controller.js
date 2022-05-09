@@ -108,7 +108,7 @@ let controller = {
                 if (results.length == 0) {
                     res.status(404).json({
                         status: 404,
-                        message: `User with id ${id} not found`
+                        message: `User does not exist`
                     })
                 } else {
                     res.status(200).json({
@@ -181,7 +181,7 @@ let controller = {
                             } else if (existingId == false) {
                                 res.status(400).json({
                                     status: 400,
-                                    message: `User with id ${id} not found`
+                                    message: `User does not exist`
                                 })
                             } else if (uniqueEmail == false) {
                                 res.status(409).json({
@@ -230,7 +230,7 @@ let controller = {
                 } else {
                     res.status(400).json({
                         status: 400,
-                        message: `User with id ${id} not found`
+                        message: `User does not exist`
                     })
                 }
             })
