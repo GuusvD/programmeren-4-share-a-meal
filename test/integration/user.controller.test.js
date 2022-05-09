@@ -49,8 +49,8 @@ describe('Manage users', () => {
                 })
                 .end((err, res) => {
                     res.should.be.an('object')
-                    let { status, message } = res.body
-                    status.should.equals(409)
+                    let { statusCode, message } = res.body
+                    statusCode.should.equals(409)
                     message.should.be.a('string').that.equals('User already exist!')
                     done()
                 })
