@@ -75,7 +75,7 @@ describe('Manage users', () => {
                 .end((err, res) => {
                     res.should.be.an('object')
                     let { status, result } = res.body
-                    status.should.equals(200)
+                    status.should.equals(201)
                     result.firstName.should.be.a('string').that.equals('John')
                     result.lastName.should.be.a('string').that.equals('Doe')
                     done()

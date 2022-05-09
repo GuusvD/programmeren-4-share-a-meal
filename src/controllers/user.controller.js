@@ -63,8 +63,8 @@ let controller = {
 
                             if (error) throw error
 
-                            res.status(200).json({
-                                status: 200,
+                            res.status(201).json({
+                                status: 201,
                                 result: user
                             })
                         })
