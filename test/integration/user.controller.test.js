@@ -51,7 +51,7 @@ describe('Manage users', () => {
                     res.should.be.an('object')
                     let { status, message } = res.body
                     status.should.equals(409)
-                    message.should.be.a('string').that.equals('Emailadress already taken')
+                    message.should.be.a('string').that.equals('User already exist!')
                     done()
                 })
         })
