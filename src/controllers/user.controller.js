@@ -71,8 +71,8 @@ let controller = {
                     })
                 } else {
                     res.status(409).json({
-                        status: 409,
-                        message: 'User already exist!'
+                        statusCode: 409,
+                        message: 'Emailadress already taken'
                     })
                 }
             })
