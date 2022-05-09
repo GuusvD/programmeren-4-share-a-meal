@@ -220,7 +220,8 @@ let controller = {
                             if (error) throw error
 
                             res.status(200).json({
-                                status: 200
+                                status: 200,
+                                message: "User succesfully deleted"
                             })
                         })
                     })

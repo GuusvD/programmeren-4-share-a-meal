@@ -199,8 +199,9 @@ describe('Manage users', () => {
                 .delete('/api/user/5')
                 .end((err, res) => {
                     res.should.be.an('object')
-                    let { status } = res.body
+                    let { status, message } = res.body
                     status.should.equals(200)
+                    message.should.be.an('string').that.equals('User succesfully deleted')
                     done()
                 })
         })
