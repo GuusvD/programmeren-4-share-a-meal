@@ -7,10 +7,12 @@ let id = 5
 let controller = {
     validateUser: (req, res, next) => {
         let user = req.body
-        let { firstName, lastName, street, city, password, emailAdress, phoneNumber } = user
+        let { firstName, lastName, street, city, password, emailAdress, phoneNumber, isActive, roles } = user
 
         try {
             assert(typeof firstName === "string", "Firstname must be a string!")
+            assert(typeof isActive === "boolean", "Is active must be a boolean!")
+            assert(typeof roles === "string", "Roles must be a string!")
             assert(typeof lastName === "string", "Lastname must be a string!")
             assert(typeof street === "string", "Street must be a string!")
             assert(typeof city === "string", "City must be a string!")
@@ -56,7 +58,7 @@ let controller = {
                     dbconnection.getConnection(function (err, connection) {
                         if (err) throw err
 
-                        connection.query(`INSERT INTO user (id, firstName, lastName, street, city, password, emailAdress, phoneNumber) VALUES ('${user.id}', '${user.firstName}', '${user.lastName}', '${user.street}', '${user.city}', '${user.password}', '${user.emailAdress}', '${user.phoneNumber}')`, function (error, results, fields) {
+                        connection.query(`INSERT INTO user (id, firstName, lastName, street, city, password, emailAdress, phoneNumber, isActive, roles) VALUES ('${user.id}', '${user.firstName}', '${user.lastName}', '${user.street}', '${user.city}', '${user.password}', '${user.emailAdress}', '${user.phoneNumber}', ${user.isActive}, '${user.roles}')`, function (error, results, fields) {
                             connection.release()
 
                             if (error) throw error
