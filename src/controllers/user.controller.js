@@ -7,18 +7,15 @@ let id = 5
 let controller = {
     validateUser: (req, res, next) => {
         let user = req.body
-        let { firstName, lastName, street, city, password, emailAdress, phoneNumber, isActive, roles } = user
+        let { firstName, lastName, street, city, password, emailAdress } = user
 
         try {
             assert(typeof firstName === "string", "Firstname must be a string!")
-            
-            
             assert(typeof lastName === "string", "Lastname must be a string!")
             assert(typeof street === "string", "Street must be a string!")
             assert(typeof city === "string", "City must be a string!")
             assert(typeof password === "string", "Password must be a string!")
             assert(typeof emailAdress === "string", "Emailadress must be a string!")
-            
             assert(MailChecker.isValid(emailAdress), "Emailadress is not valid!")
 
             next()
@@ -58,7 +55,7 @@ let controller = {
                     dbconnection.getConnection(function (err, connection) {
                         if (err) throw err
 
-                        connection.query(`INSERT INTO user (id, firstName, lastName, street, city, password, emailAdress, phoneNumber, isActive, roles) VALUES ('${user.id}', '${user.firstName}', '${user.lastName}', '${user.street}', '${user.city}', '${user.password}', '${user.emailAdress}', '${user.phoneNumber}', ${user.isActive}, '${user.roles}')`, function (error, results, fields) {
+                        connection.query(`INSERT INTO user (id, firstName, lastName, street, city, password, emailAdress) VALUES ('${user.id}', '${user.firstName}', '${user.lastName}', '${user.street}', '${user.city}', '${user.password}', '${user.emailAdress}')`, function (error, results, fields) {
                             connection.release()
 
                             if (error) throw error
@@ -161,7 +158,7 @@ let controller = {
                             dbconnection.getConnection(function (err, connection) {
                                 if (err) throw err
 
-                                connection.query(`UPDATE user SET firstName = '${user.firstName}', lastName = '${user.lastName}', isActive = ${user.isActive}, emailAdress = '${user.emailAdress}', password = '${user.password}', phoneNumber = '${user.phoneNumber}', roles = '${user.roles}', street = '${user.street}', city = '${user.city}' WHERE id = ${id}`, function (error, results, fields) {
+                                connection.query(`UPDATE user SET firstName = '${user.firstName}', lastName = '${user.lastName}', emailAdress = '${user.emailAdress}', password = '${user.password}', street = '${user.street}', city = '${user.city}' WHERE id = ${id}`, function (error, results, fields) {
                                     connection.release()
 
                                     if (error) throw error
