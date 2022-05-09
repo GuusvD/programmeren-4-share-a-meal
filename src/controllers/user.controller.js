@@ -168,7 +168,7 @@ let controller = {
 
                                     res.status(200).json({
                                         status: 200,
-                                        message: "Updated the user"
+                                        result: user
                                     })
                                 })
                             })
@@ -178,15 +178,15 @@ let controller = {
                                     status: 400,
                                     message: "No saveable user data"
                                 })
+                            } else if (existingId == false) {
+                                res.status(400).json({
+                                    status: 400,
+                                    message: `User with id ${id} not found`
+                                })
                             } else if (uniqueEmail == false) {
                                 res.status(409).json({
                                     status: 409,
                                     message: "Emailadress already taken"
-                                })
-                            } else if (existingId == false) {
-                                res.status(404).json({
-                                    status: 404,
-                                    message: `User with id ${id} not found`
                                 })
                             }
                         }
@@ -223,14 +223,13 @@ let controller = {
                             if (error) throw error
 
                             res.status(200).json({
-                                status: 200,
-                                message: "Deleted the user"
+                                status: 200
                             })
                         })
                     })
                 } else {
-                    res.status(404).json({
-                        status: 404,
+                    res.status(400).json({
+                        status: 400,
                         message: `User with id ${id} not found`
                     })
                 }

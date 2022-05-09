@@ -78,10 +78,6 @@ describe('Manage users', () => {
                     status.should.equals(200)
                     result.firstName.should.be.a('string').that.equals('John')
                     result.lastName.should.be.a('string').that.equals('Doe')
-                    result.street.should.be.a('string').that.equals('Lovensdijkstraat 61')
-                    result.city.should.be.a('string').that.equals('Breda')
-                    result.password.should.be.a('string').that.equals('secret')
-                    result.emailAdress.should.be.a('string').that.equals('john.doe@server.com')
                     done()
                 })
         })
@@ -117,19 +113,27 @@ describe('Manage users', () => {
         })
     })
 
-    //////////////////////////////////////////////////////////
-    
     describe('UC-205: Gebruiker wijzigen', () => {
         it('TC-205-1: Verplicht veld ontbreekt', (done) => {
             chai
                 .request(server)
-                //Non-existent user-id "0"
-                .get('/api/user/0')
+                .put('/api/user/1')
+                .send({
+                    //Emailadress is missing
+                    firstName: "John",
+                    lastName: "Doe",
+                    street: "Lovensdijkstraat 61",
+                    city: "Breda",
+                    password: "secret",
+                    phoneNumber: "06-12345678",
+                    isActive: true,
+                    roles: "editor,guest"
+                })
                 .end((err, res) => {
                     res.should.be.an('object')
                     let { status, message } = res.body
-                    status.should.equals(404)
-                    message.should.be.an('string').that.equals('User with id 0 not found')
+                    status.should.equals(400)
+                    message.should.be.an('string').that.equals('Emailadress must be a string!')
                     done()
                 })
         })
@@ -137,13 +141,24 @@ describe('Manage users', () => {
         it('TC-205-4: Gebruiker bestaat niet', (done) => {
             chai
                 .request(server)
-                //Existing user-id "1"
-                .get('/api/user/1')
+                //Non-existing user-id "0"
+                .put('/api/user/0')
+                .send({
+                    firstName: "John",
+                    lastName: "Doe",
+                    street: "Lovensdijkstraat 61",
+                    city: "Breda",
+                    password: "secret",
+                    emailAdress: "john.doe@server.com",
+                    phoneNumber: "06-12345678",
+                    isActive: true,
+                    roles: "editor,guest"
+                })
                 .end((err, res) => {
                     res.should.be.an('object')
-                    let { status, result } = res.body
-                    status.should.equals(200)
-                    result.length.should.equals(1)
+                    let { status, message } = res.body
+                    status.should.equals(400)
+                    message.should.be.an('string').that.equals('User with id 0 not found')
                     done()
                 })
         })
@@ -152,12 +167,32 @@ describe('Manage users', () => {
             chai
                 .request(server)
                 //Existing user-id "1"
-                .get('/api/user/1')
+                .put('/api/user/1')
+                .send({
+                    //Changes isActive from true ("1") to false ("0") and adds street, city, roles and phonenumber
+                    firstName: "Mariëtte",
+                    lastName: "van den Dullemen",
+                    street: "Lovensdijkstraat 61",
+                    city: "Breda",
+                    password: "secret",
+                    emailAdress: "m.vandullemen@server.com",
+                    phoneNumber: "06-12345678",
+                    isActive: false,
+                    roles: "editor,guest"
+                })
                 .end((err, res) => {
                     res.should.be.an('object')
                     let { status, result } = res.body
                     status.should.equals(200)
-                    result.length.should.equals(1)
+                    result.firstName.should.be.a('string').that.equals('Mariëtte')
+                    result.lastName.should.be.a('string').that.equals('van den Dullemen')
+                    result.street.should.be.a('string').that.equals('Lovensdijkstraat 61')
+                    result.city.should.be.a('string').that.equals('Breda')
+                    result.password.should.be.a('string').that.equals('secret')
+                    result.emailAdress.should.be.a('string').that.equals('m.vandullemen@server.com')
+                    result.phoneNumber.should.be.a('string').that.equals('06-12345678')
+                    result.isActive.should.be.a('boolean').that.equals(false)
+                    result.roles.should.be.a('string').that.equals('editor,guest')
                     done()
                 })
         })
@@ -168,11 +203,11 @@ describe('Manage users', () => {
             chai
                 .request(server)
                 //Non-existent user-id "0"
-                .get('/api/user/0')
+                .delete('/api/user/0')
                 .end((err, res) => {
                     res.should.be.an('object')
                     let { status, message } = res.body
-                    status.should.equals(404)
+                    status.should.equals(400)
                     message.should.be.an('string').that.equals('User with id 0 not found')
                     done()
                 })
@@ -181,13 +216,12 @@ describe('Manage users', () => {
         it('TC-206-4: Gebruiker succesvol verwijderd', (done) => {
             chai
                 .request(server)
-                //Existing user-id "1"
-                .get('/api/user/1')
+                //Existing user-id "5"
+                .delete('/api/user/5')
                 .end((err, res) => {
                     res.should.be.an('object')
-                    let { status, result } = res.body
+                    let { status } = res.body
                     status.should.equals(200)
-                    result.length.should.equals(1)
                     done()
                 })
         })
