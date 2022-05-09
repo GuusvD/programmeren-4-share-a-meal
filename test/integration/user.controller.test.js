@@ -49,9 +49,9 @@ describe('Manage users', () => {
                 })
                 .end((err, res) => {
                     res.should.be.an('object')
-                    let { statusCode, message } = res.body
-                    statusCode.should.equals(409)
-                    message.should.be.a('string').that.equals('Emailadress already taken!')
+                    let { status, message } = res.body
+                    status.should.equals(409)
+                    message.should.be.a('string').that.equals('Emailadress already taken')
                     done()
                 })
         })
