@@ -93,7 +93,7 @@ describe('Manage users', () => {
                     res.should.be.an('object')
                     let { status, message } = res.body
                     status.should.equals(404)
-                    message.should.be.an('string').that.equals('User with id 0 not found')
+                    message.should.be.an('string').that.equals('User does not exist')
                     done()
                 })
         })
@@ -158,7 +158,7 @@ describe('Manage users', () => {
                     res.should.be.an('object')
                     let { status, message } = res.body
                     status.should.equals(400)
-                    message.should.be.an('string').that.equals('User with id 0 not found')
+                    message.should.be.an('string').that.equals('User does not exist')
                     done()
                 })
         })
@@ -208,7 +208,7 @@ describe('Manage users', () => {
                     res.should.be.an('object')
                     let { status, message } = res.body
                     status.should.equals(400)
-                    message.should.be.an('string').that.equals('User with id 0 not found')
+                    message.should.be.an('string').that.equals('User does not exist')
                     done()
                 })
         })
