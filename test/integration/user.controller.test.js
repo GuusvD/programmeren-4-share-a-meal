@@ -17,7 +17,8 @@ describe('Manage users', () => {
                     emailAdress: "john.doe@server.com",
                     password: "secret",
                     street: "Lovensdijkstraat 61",
-                    city: "Breda"
+                    city: "Breda",
+                    phoneNumber: "06-12345678"
                 })
                 .end((err, res) => {
                     res.should.be.an('object')
@@ -39,7 +40,8 @@ describe('Manage users', () => {
                     street: "Lovensdijkstraat 61",
                     city: "Breda",
                     password: "secret",
-                    emailAdress: "j.doe@server.com"
+                    emailAdress: "j.doe@server.com",
+                    phoneNumber: "06-12345678"
                 })
                 .end((err, res) => {
                     res.should.be.an('object')
@@ -61,7 +63,8 @@ describe('Manage users', () => {
                     street: "Lovensdijkstraat 61",
                     city: "Breda",
                     password: "secret",
-                    emailAdress: "john.doe@server.com"
+                    emailAdress: "john.doe@server.com",
+                    phoneNumber: "06-12345678"
                 })
                 .end((err, res) => {
                     res.should.be.an('object')
