@@ -158,95 +158,20 @@ let controller = {
                         })
 
                         if (existingId == true && uniqueEmail == true && !(Object.keys(req.body).length === 0)) {
-                            if (user.firstName) {
-                                dbconnection.getConnection(function (err, connection) {
-                                    if (err) throw err
+                            dbconnection.getConnection(function (err, connection) {
+                                if (err) throw err
 
-                                    connection.query(`UPDATE user SET firstName = '${user.firstName}' WHERE id = ${id}`, function (error, results, fields) {
-                                        connection.release()
+                                connection.query(`UPDATE user SET firstName = '${user.firstName}', lastName = '${user.lastName}', isActive = ${user.isActive}, emailAdress = '${user.emailAdress}', password = '${user.password}', phoneNumber = '${user.phoneNumber}', roles = '${user.roles}', street = '${user.street}', city = '${user.city}' WHERE id = ${id}`, function (error, results, fields) {
+                                    connection.release()
 
-                                        if (error) throw error
+                                    if (error) throw error
+
+                                    res.status(200).json({
+                                        status: 200,
+                                        message: "Updated the user"
                                     })
                                 })
-                            }
-
-                            if (user.lastName) {
-                                dbconnection.getConnection(function (err, connection) {
-                                    if (err) throw err
-
-                                    connection.query(`UPDATE user SET lastName = '${user.lastName}' WHERE id = ${id}`, function (error, results, fields) {
-                                        connection.release()
-
-                                        if (error) throw error
-                                    })
-                                })
-                            }
-
-                            if (user.emailAdress) {
-                                dbconnection.getConnection(function (err, connection) {
-                                    if (err) throw err
-
-                                    connection.query(`UPDATE user SET emailAdress = '${user.emailAdress}' WHERE id = ${id}`, function (error, results, fields) {
-                                        connection.release()
-
-                                        if (error) throw error
-                                    })
-                                })
-                            }
-
-                            if (user.password) {
-                                dbconnection.getConnection(function (err, connection) {
-                                    if (err) throw err
-
-                                    connection.query(`UPDATE user SET password = '${user.password}' WHERE id = ${id}`, function (error, results, fields) {
-                                        connection.release()
-
-                                        if (error) throw error
-                                    })
-                                })
-                            }
-
-                            if (user.phoneNumber) {
-                                dbconnection.getConnection(function (err, connection) {
-                                    if (err) throw err
-
-                                    connection.query(`UPDATE user SET phoneNumber = '${user.phoneNumber}' WHERE id = ${id}`, function (error, results, fields) {
-                                        connection.release()
-
-                                        if (error) throw error
-                                    })
-                                })
-                            }
-
-                            if (user.street) {
-                                dbconnection.getConnection(function (err, connection) {
-                                    if (err) throw err
-
-                                    connection.query(`UPDATE user SET street = '${user.street}' WHERE id = ${id}`, function (error, results, fields) {
-                                        connection.release()
-
-                                        if (error) throw error
-                                    })
-                                })
-                            }
-
-                            if (user.city) {
-                                dbconnection.getConnection(function (err, connection) {
-                                    if (err) throw err
-
-                                    connection.query(`UPDATE user SET city = '${user.city}' WHERE id = ${id}`, function (error, results, fields) {
-                                        connection.release()
-
-                                        if (error) throw error
-                                    })
-                                })
-                            }
-
-                            res.status(200).json({
-                                status: 200,
-                                message: "Updated the user"
                             })
-
                         } else {
                             if (Object.keys(req.body).length === 0) {
                                 res.status(400).json({
