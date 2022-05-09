@@ -17,10 +17,7 @@ describe('Manage users', () => {
                     emailAdress: "john.doe@server.com",
                     password: "secret",
                     street: "Lovensdijkstraat 61",
-                    city: "Breda",
-                    phoneNumber: "06-12345678",
-                    isActive: true,
-                    roles: "editor,guest"
+                    city: "Breda"
                 })
                 .end((err, res) => {
                     res.should.be.an('object')
@@ -42,10 +39,7 @@ describe('Manage users', () => {
                     street: "Lovensdijkstraat 61",
                     city: "Breda",
                     password: "secret",
-                    emailAdress: "j.doe@server.com",
-                    phoneNumber: "06-12345678",
-                    isActive: true,
-                    roles: "editor,guest"
+                    emailAdress: "j.doe@server.com"
                 })
                 .end((err, res) => {
                     res.should.be.an('object')
@@ -67,10 +61,7 @@ describe('Manage users', () => {
                     street: "Lovensdijkstraat 61",
                     city: "Breda",
                     password: "secret",
-                    emailAdress: "john.doe@server.com",
-                    phoneNumber: "06-12345678",
-                    isActive: true,
-                    roles: "editor,guest"
+                    emailAdress: "john.doe@server.com"
                 })
                 .end((err, res) => {
                     res.should.be.an('object')
@@ -124,10 +115,7 @@ describe('Manage users', () => {
                     lastName: "Doe",
                     street: "Lovensdijkstraat 61",
                     city: "Breda",
-                    password: "secret",
-                    phoneNumber: "06-12345678",
-                    isActive: true,
-                    roles: "editor,guest"
+                    password: "secret"
                 })
                 .end((err, res) => {
                     res.should.be.an('object')
@@ -149,10 +137,7 @@ describe('Manage users', () => {
                     street: "Lovensdijkstraat 61",
                     city: "Breda",
                     password: "secret",
-                    emailAdress: "john.doe@server.com",
-                    phoneNumber: "06-12345678",
-                    isActive: true,
-                    roles: "editor,guest"
+                    emailAdress: "john.doe@server.com"
                 })
                 .end((err, res) => {
                     res.should.be.an('object')
@@ -169,16 +154,13 @@ describe('Manage users', () => {
                 //Existing user-id "1"
                 .put('/api/user/1')
                 .send({
-                    //Changes isActive from true ("1") to false ("0") and adds street, city, roles and phonenumber
+                    //Adds street and city to the user
                     firstName: "Mariëtte",
                     lastName: "van den Dullemen",
                     street: "Lovensdijkstraat 61",
                     city: "Breda",
                     password: "secret",
                     emailAdress: "m.vandullemen@server.com",
-                    phoneNumber: "06-12345678",
-                    isActive: false,
-                    roles: "editor,guest"
                 })
                 .end((err, res) => {
                     res.should.be.an('object')
@@ -190,9 +172,6 @@ describe('Manage users', () => {
                     result.city.should.be.a('string').that.equals('Breda')
                     result.password.should.be.a('string').that.equals('secret')
                     result.emailAdress.should.be.a('string').that.equals('m.vandullemen@server.com')
-                    result.phoneNumber.should.be.a('string').that.equals('06-12345678')
-                    result.isActive.should.be.a('boolean').that.equals(false)
-                    result.roles.should.be.a('string').that.equals('editor,guest')
                     done()
                 })
         })
