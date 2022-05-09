@@ -71,7 +71,7 @@ let controller = {
                     })
                 } else {
                     res.status(409).json({
-                        statusCode: 409,
+                        status: 409,
                         message: 'User already exist!'
                     })
                 }
