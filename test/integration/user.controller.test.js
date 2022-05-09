@@ -6,7 +6,7 @@ chai.should()
 chai.use(chaiHttp)
 
 describe('Manage users', () => {
-    describe('UC-201 Registreren als nieuwe gebruiker', () => {
+    describe('UC-201: Registreren als nieuwe gebruiker', () => {
         it('TC-201-1: Verplicht veld ontbreekt', (done) => {
             chai
                 .request(server)
@@ -81,7 +81,7 @@ describe('Manage users', () => {
         })
     })
 
-    describe('UC-204 Details van gebruiker', () => {
+    describe('UC-204: Details van gebruiker', () => {
         it('TC-204-2: Gebruiker-ID bestaat niet', (done) => {
             chai
                 .request(server)
@@ -97,6 +97,82 @@ describe('Manage users', () => {
         })
 
         it('TC-204-3: Gebruiker-ID bestaat', (done) => {
+            chai
+                .request(server)
+                //Existing user-id "1"
+                .get('/api/user/1')
+                .end((err, res) => {
+                    res.should.be.an('object')
+                    let { status, result } = res.body
+                    status.should.equals(200)
+                    result.length.should.equals(1)
+                    done()
+                })
+        })
+    })
+
+    //////////////////////////////////////////////////////////
+    
+    describe('UC-205: Gebruiker wijzigen', () => {
+        it('TC-205-1: Verplicht veld ontbreekt', (done) => {
+            chai
+                .request(server)
+                //Non-existent user-id "0"
+                .get('/api/user/0')
+                .end((err, res) => {
+                    res.should.be.an('object')
+                    let { status, message } = res.body
+                    status.should.equals(404)
+                    message.should.be.an('string').that.equals('User with id 0 not found')
+                    done()
+                })
+        })
+
+        it('TC-205-4: Gebruiker bestaat niet', (done) => {
+            chai
+                .request(server)
+                //Existing user-id "1"
+                .get('/api/user/1')
+                .end((err, res) => {
+                    res.should.be.an('object')
+                    let { status, result } = res.body
+                    status.should.equals(200)
+                    result.length.should.equals(1)
+                    done()
+                })
+        })
+
+        it('TC-205-6: Gebruiker succesvol gewijzigd', (done) => {
+            chai
+                .request(server)
+                //Existing user-id "1"
+                .get('/api/user/1')
+                .end((err, res) => {
+                    res.should.be.an('object')
+                    let { status, result } = res.body
+                    status.should.equals(200)
+                    result.length.should.equals(1)
+                    done()
+                })
+        })
+    })
+
+    describe('UC-206: Gebruiker verwijderen', () => {
+        it('TC-206-1: Gebruiker bestaat niet', (done) => {
+            chai
+                .request(server)
+                //Non-existent user-id "0"
+                .get('/api/user/0')
+                .end((err, res) => {
+                    res.should.be.an('object')
+                    let { status, message } = res.body
+                    status.should.equals(404)
+                    message.should.be.an('string').that.equals('User with id 0 not found')
+                    done()
+                })
+        })
+
+        it('TC-206-4: Gebruiker succesvol verwijderd', (done) => {
             chai
                 .request(server)
                 //Existing user-id "1"
