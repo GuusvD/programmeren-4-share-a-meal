@@ -60,9 +60,19 @@ let controller = {
 
                             if (error) throw error
 
-                            res.status(201).json({
-                                status: 201,
-                                result: user
+                            dbconnection.getConnection(function (err, connection) {
+                                if (err) throw err
+
+                                connection.query(`SELECT * FROM user WHERE id = ${id}`, function (error, results, fields) {
+                                    connection.release()
+
+                                    if (error) throw error
+
+                                    res.status(201).json({
+                                        status: 201,
+                                        result: results
+                                    })
+                                })
                             })
                         })
                     })
