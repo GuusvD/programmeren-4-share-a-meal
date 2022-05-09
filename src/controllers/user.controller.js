@@ -77,9 +77,17 @@ let controller = {
 
                                             if (error) throw error
 
+                                            let user = results[0]
+
+                                            if (user.isActive == 0) {
+                                                user.isActive = false
+                                            } else {
+                                                user.isActive = true
+                                            }
+
                                             res.status(201).json({
                                                 status: 201,
-                                                result: results[0]
+                                                result: user
                                             })
                                         })
                                     })
