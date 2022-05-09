@@ -54,11 +54,7 @@ let controller = {
 
                             if (error) throw error
 
-                            results.forEach(element => {
-                                if (element.id > id) {
-                                    id = element.id
-                                }
-                            })
+                            id = results.length + 1
 
                             user = {
                                 id,
@@ -83,7 +79,7 @@ let controller = {
 
                                             res.status(201).json({
                                                 status: 201,
-                                                result: results
+                                                result: results[0]
                                             })
                                         })
                                     })
