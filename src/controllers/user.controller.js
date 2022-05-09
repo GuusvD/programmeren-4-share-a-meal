@@ -2,7 +2,7 @@ const assert = require('assert')
 const dbconnection = require('../../database/dbconnection')
 const MailChecker = require('mailchecker')
 
-let id = 5
+let id
 
 let controller = {
     validateUser: (req, res, next) => {
@@ -31,12 +31,6 @@ let controller = {
         let user = req.body
         let boolean = false
 
-        id++
-        user = {
-            id,
-            ...user,
-        }
-
         dbconnection.getConnection(function (err, connection) {
             if (err) throw err
 
@@ -55,22 +49,43 @@ let controller = {
                     dbconnection.getConnection(function (err, connection) {
                         if (err) throw err
 
-                        connection.query(`INSERT INTO user (id, firstName, lastName, street, city, password, emailAdress) VALUES ('${user.id}', '${user.firstName}', '${user.lastName}', '${user.street}', '${user.city}', '${user.password}', '${user.emailAdress}')`, function (error, results, fields) {
+                        connection.query('SELECT * FROM user', function (error, results, fields) {
                             connection.release()
 
                             if (error) throw error
 
+                            results.forEach(element => {
+                                if (element.id > id) {
+                                    id = element.id
+                                }
+                            })
+
+                            user = {
+                                id,
+                                ...user
+                            }
+
                             dbconnection.getConnection(function (err, connection) {
                                 if (err) throw err
 
-                                connection.query(`SELECT * FROM user WHERE id = ${id}`, function (error, results, fields) {
+                                connection.query(`INSERT INTO user (id, firstName, lastName, street, city, password, emailAdress) VALUES ('${user.id}', '${user.firstName}', '${user.lastName}', '${user.street}', '${user.city}', '${user.password}', '${user.emailAdress}')`, function (error, results, fields) {
                                     connection.release()
 
                                     if (error) throw error
 
-                                    res.status(201).json({
-                                        status: 201,
-                                        result: results
+                                    dbconnection.getConnection(function (err, connection) {
+                                        if (err) throw err
+
+                                        connection.query(`SELECT * FROM user WHERE id = ${id}`, function (error, results, fields) {
+                                            connection.release()
+
+                                            if (error) throw error
+
+                                            res.status(201).json({
+                                                status: 201,
+                                                result: results
+                                            })
+                                        })
                                     })
                                 })
                             })
