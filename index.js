@@ -24,6 +24,14 @@ app.all('*', (req, res) => {
   })
 })
 
+//Response for all non-existing end-points for user data interactions
+app.all('/api/user/undefined', (req, res) => {
+  res.status(401).json({
+    status: 401,
+    message: 'End-point not found'
+  })
+})
+
 //Error handling
 app.use((err, req, res, next) => {
   res.status(err.status).json(err)
