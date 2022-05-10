@@ -71,7 +71,15 @@ let controller = {
 
                             if (error) throw error
 
-                            id = results.length + 1
+                            let highestId = -1
+
+                            results.forEach(element => {
+                                if (element.id > highestId) {
+                                    highestId = element.id
+                                }
+                            })
+
+                            id = highestId + 1
 
                             user = {
                                 id,
