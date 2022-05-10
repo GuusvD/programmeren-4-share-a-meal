@@ -155,7 +155,8 @@ let controller = {
         const id = req.params.id
         let existingId = false
         let uniqueEmail = true
-        let user = req.body
+        let newUser = req.body
+        let oldUser
 
         dbconnection.getConnection(function (err, connection) {
             if (err) throw err
@@ -167,6 +168,7 @@ let controller = {
 
                 if (results.length != 0) {
                     existingId = true
+                    oldUser = results[0]
                 }
 
                 dbconnection.getConnection(function (err, connection) {
@@ -178,12 +180,17 @@ let controller = {
                         if (error) throw error
 
                         results.forEach(element => {
-                            if (element.emailAdress == user.emailAdress && element.id != id) {
+                            if (element.emailAdress == newUser.emailAdress && element.id != id) {
                                 uniqueEmail = false
                             }
                         })
 
                         if (existingId == true && uniqueEmail == true && !(Object.keys(req.body).length === 0)) {
+                            const user = {
+                                ...oldUser,
+                                ...newUser
+                            }
+
                             dbconnection.getConnection(function (err, connection) {
                                 if (err) throw err
 
