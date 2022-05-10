@@ -16,7 +16,7 @@ let controller = {
             assert(typeof city === "string", "City must be a string!")
             assert(typeof password === "string", "Password must be a string!")
             assert(typeof emailAdress === "string", "Emailadress must be a string!")
-            assert(MailChecker.isValid(emailAdress), "Emailadress is not valid!")
+            // assert(MailChecker.isValid(emailAdress), "Emailadress is not valid!")
 
             next()
         } catch (error) {
