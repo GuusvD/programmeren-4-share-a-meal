@@ -5,7 +5,7 @@ const MailChecker = require('mailchecker')
 let id
 
 let controller = {
-    validateUser: (req, res, next) => {
+    validateUserInsert: (req, res, next) => {
         let user = req.body
         let { firstName, lastName, street, city, password, emailAdress } = user
 
@@ -16,7 +16,24 @@ let controller = {
             assert(typeof city === "string", "City must be a string!")
             assert(typeof password === "string", "Password must be a string!")
             assert(typeof emailAdress === "string", "Emailadress must be a string!")
-            // assert(MailChecker.isValid(emailAdress), "Emailadress is not valid!")
+            assert(MailChecker.isValid(emailAdress), "Emailadress is not valid!")
+
+            next()
+        } catch (error) {
+            const errorFinal = {
+                status: 400,
+                message: error.message
+            }
+            next(errorFinal)
+        }
+    },
+    validateUserUpdate: (req, res, next) => {
+        let user = req.body
+        let { emailAdress } = user
+
+        try {
+            assert(typeof emailAdress === "string", "Emailadress must be a string!")
+            assert(MailChecker.isValid(emailAdress), "Emailadress is not valid!")
 
             next()
         } catch (error) {
