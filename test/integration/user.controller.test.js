@@ -2,7 +2,7 @@ const chai = require('chai')
 const chaiHttp = require('chai-http')
 const server = require('../../index')
 const jwt = require("jsonwebtoken")
-const jwtSecretKey = require("./../config/config").jwtSecretKey
+const jwtSecretKey = require("../../src/config/config").jwtSecretKey
 
 chai.should()
 chai.use(chaiHttp)
@@ -13,7 +13,6 @@ describe('Manage users', () => {
             chai
                 .request(server)
                 .post('/api/user')
-                .set('authorization', 'Bearer ' + jwt.sign({ userId: 1}, jwtSecretKey))
                 .send({
                     //Firstname is missing
                     lastName: "Doe",
@@ -199,6 +198,7 @@ describe('Manage users', () => {
         it('TC-206-4: Gebruiker succesvol verwijderd', (done) => {
             chai
                 .request(server)
+                .set('authorization', 'Bearer ' + jwt.sign({ userId: 6 }, jwtSecretKey))
                 //Existing user-id "6" (just created by TC-201-5)
                 .delete('/api/user/6')
                 .end((err, res) => {
