@@ -1,6 +1,8 @@
 const chai = require('chai')
 const chaiHttp = require('chai-http')
 const server = require('../../index')
+const jwt = require("jsonwebtoken")
+const jwtSecretKey = require("./../config/config").jwtSecretKey
 
 chai.should()
 chai.use(chaiHttp)
@@ -11,6 +13,7 @@ describe('Manage users', () => {
             chai
                 .request(server)
                 .post('/api/user')
+                .set('authorization', 'Bearer ' + jwt.sign({ userId: 1}, jwtSecretKey))
                 .send({
                     //Firstname is missing
                     lastName: "Doe",
