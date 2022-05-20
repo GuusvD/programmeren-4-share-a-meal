@@ -198,9 +198,9 @@ describe('Manage users', () => {
         it('TC-206-4: Gebruiker succesvol verwijderd', (done) => {
             chai
                 .request(server)
-                .set('authorization', 'Bearer ' + jwt.sign({ userId: 6 }, jwtSecretKey))
                 //Existing user-id "6" (just created by TC-201-5)
                 .delete('/api/user/6')
+                .set('authorization', 'Bearer ' + jwt.sign({ userId: 6 }, jwtSecretKey))
                 .end((err, res) => {
                     res.should.be.an('object')
                     let { status, message } = res.body
