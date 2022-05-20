@@ -141,7 +141,7 @@ let controller = {
             if (firstName) {
                 query += `firstName = '${firstName}'`
             }
-    
+
             if (lastName && firstName) {
                 query += ` AND lastName = '${lastName}'`
                 boolean = true

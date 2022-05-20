@@ -6,11 +6,13 @@ const app = express()
 const port = process.env.PORT
 const userRouter = require('./src/routes/user.routes')
 const mealRouter = require('./src/routes/meal.routes')
+const authRouter = require('./src/routes/auth.routes')
 const bodyparser = require("body-parser")
 
 app.use(bodyparser.json())
 app.use(userRouter)
 app.use(mealRouter)
+app.use(authRouter)
 
 app.listen(port, () => {
   console.log(`Share-a-meal app listening on port ${port}`)
@@ -34,8 +36,8 @@ app.all('/api/user/undefined', (req, res) => {
 
 //Error handling
 app.use((err, req, res, next) => {
-  res.status(err.status).json({
-    status: err.status,
+  res.status(500).json({
+    status: 500,
     message: err.toString()
   })
 })
