@@ -130,10 +130,36 @@ let controller = {
         })
     },
     getAllUsers: (req, res) => {
+        //
+        const { firstName, lastName } = req.query
+        let query = 'SELECT * FROM user'
+        let boolean = false
+
+        if (firstName || lastName) {
+            query += ' WHERE '
+
+            if (firstName) {
+                query += `firstName = '${firstName}'`
+            }
+
+            if (lastName && firstName) {
+                query += ` AND lastName = '${lastName}'`
+                boolean = true
+            }
+
+            if (lastName && boolean == false) {
+                query += `lastName = '${lastName}'`
+            }
+        }
+
+        query += ';'
+        console.log(query)
+        //
+
         dbconnection.getConnection(function (err, connection) {
             if (err) throw err
 
-            connection.query('SELECT * FROM user', function (error, results, fields) {
+            connection.query(query, function (error, results, fields) {
                 connection.release()
 
                 if (error) throw error
