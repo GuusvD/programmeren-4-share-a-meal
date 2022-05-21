@@ -135,50 +135,84 @@ let controller = {
             })
         })
     },
-    getAllUsers: (req, res) => {
-        //
-        const { firstName, lastName, street, city, emailAdress } = req.query
-        let query = 'SELECT * FROM user'
-        let firstNameLastName = false
-        let streetCity = false
+    getAllUsers: (req, res, next) => {
+        let { isActive, firstName, lastName, emailAdress, street, city, phoneNumber } = req.query
 
-        if (firstName || lastName || street || city || emailAdress) {
-            query += ' WHERE '
+        let query = "SELECT * FROM user"
+
+        if (isActive || firstName || lastName || emailAdress || street || city || phoneNumber) {
+            let count = 0
+
+            if (isActive || firstName || lastName || emailAdress || street || city || phoneNumber) {
+                query += " WHERE "
+            }
+
+            if (isActive) {
+                if (isActive == true) {
+                    isActive = 1
+                } else if (isActive == false) {
+                    isActive = 0
+                }
+
+                query += `isActive = ${isActive}`
+                count++
+            }
 
             if (firstName) {
+                if (count === 1) {
+                    query += " AND "
+                }
+                count++
                 query += `firstName = '${firstName}'`
             }
 
-            if (lastName && firstName) {
-                query += ` AND lastName = '${lastName}'`
-                firstNameLastName = true
-            }
-
-            if (lastName && firstNameLastName == false) {
+            if (lastName) {
+                if (count === 1) {
+                    query += " AND "
+                }
+                count++
                 query += `lastName = '${lastName}'`
             }
 
+            if (emailAdress) {
+                if (count === 1) {
+                    query += " AND "
+                }
+                count++
+                query += `emailAdress = '${emailAdress}'`
+            }
+
             if (street) {
+                if (count === 1) {
+                    query += " AND "
+                }
+                count++
                 query += `street = '${street}'`
             }
 
-            if (city && street) {
-                query += ` AND city = '${city}'`
-                streetCity = true
-            }
-
-            if (city && streetCity == false) {
+            if (city) {
+                if (count === 1) {
+                    query += " AND "
+                }
+                count++
                 query += `city = '${city}'`
             }
 
-            if (emailAdress) {
-                query += `emailAdress = '${emailAdress}'`
+            if (phoneNumber) {
+                if (count === 1) {
+                    query += " AND "
+                }
+                count++
+                query += `phoneNumber = '${phoneNumber}'`
+            }
+
+            if (count > 2) {
+                return next({
+                    status: 400,
+                    message: "Only 2 filter parameters allowed!",
+                })
             }
         }
-
-        query += ';'
-        console.log(query)
-        //
 
         dbconnection.getConnection(function (err, connection) {
             if (err) throw err

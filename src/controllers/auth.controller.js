@@ -29,7 +29,7 @@ module.exports = {
                                 userId: userinfo.id,
                             }
 
-                            jwt.sign(payload, jwtSecretKey, { expiresIn: "1h" }, function (err, token) {
+                            jwt.sign(payload, jwtSecretKey, { expiresIn: "24h" }, function (err, token) {
                                 res.status(200).json({
                                     status: 200,
                                     result: { ...userinfo, token },
