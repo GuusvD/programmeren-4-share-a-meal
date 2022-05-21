@@ -205,9 +205,29 @@ let controller = {
         })
     },
     getUserProfile: (req, res) => {
-        res.status(501).json({
-            status: 501,
-            message: 'This function has not been implemented yet'
+        const id = req.userId
+
+        dbconnection.getConnection(function (err, connection) {
+            if (err) throw err
+
+            connection.query(`SELECT * FROM user WHERE id = ${id}`, function (error, results, fields) {
+                connection.release()
+
+                if (err) throw err
+
+                let user = results[0]
+
+                if (user.isActive == 1) {
+                    user.isActive = true
+                } else {
+                    user.isActive = false
+                }
+
+                res.status(200).json({
+                    status: 200,
+                    result: user
+                })
+            })
         })
     },
     updateUser: (req, res) => {
