@@ -206,7 +206,9 @@ let controller = {
                                     if (amountOfMeals === allMeals.length) {
                                         res.status(200).json({
                                             status: 200,
-                                            result: allMeals
+                                            result: allMeals.sort((a, b) => {
+                                                return a.id - b.id
+                                            })
                                         })
                                         res.end()
                                     }
