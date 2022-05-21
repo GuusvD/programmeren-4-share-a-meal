@@ -306,6 +306,12 @@ let controller = {
 
                                     if (error) throw error
 
+                                    if (user.isActive == 0) {
+                                        user.isActive = false
+                                    } else {
+                                        user.isActive = true
+                                    }
+
                                     res.status(200).json({
                                         status: 200,
                                         result: user
