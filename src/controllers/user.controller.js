@@ -20,6 +20,8 @@ let controller = {
             assert(emailAdress.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/), "Emailadress is not valid!")
             //At least one digit, at least one lower case, at least one upper case and at least 8 characters
             assert(password.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/), "Password is not strong enough!")
+            //Checks if phonenumber starts with 06 and has 8 more numbers after that
+            assert(phoneNumber.match(/^06[0-9]{8}$/), "Phonenumber is not valid!")
 
             next()
         } catch (error) {
