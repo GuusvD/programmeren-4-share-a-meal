@@ -12,4 +12,7 @@ router.get('/api/meal/:id', mealController.getMealById)
 //Add a new meal
 router.post('/api/meal', authController.validateToken, mealController.validateMealInsert, mealController.addMeal)
 
+//Delete a meal
+router.delete('/api/meal/:id', authController.validateToken, mealController.deleteMeal)
+
 module.exports = router

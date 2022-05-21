@@ -164,6 +164,14 @@ let controller = {
 
                 if (error) throw error
 
+                results.forEach(element => {
+                    if (element.isActive == 1) {
+                        element.isActive = true
+                    } else {
+                        element.isActive = false
+                    }
+                })
+
                 res.status(200).json({
                     status: 200,
                     result: results
