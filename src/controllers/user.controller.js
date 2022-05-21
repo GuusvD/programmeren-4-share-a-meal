@@ -136,11 +136,12 @@ let controller = {
     },
     getAllUsers: (req, res) => {
         //
-        const { firstName, lastName } = req.query
+        const { firstName, lastName, street, city, emailAdress } = req.query
         let query = 'SELECT * FROM user'
-        let boolean = false
+        let firstNameLastName = false
+        let streetCity = false
 
-        if (firstName || lastName) {
+        if (firstName || lastName || street || city || emailAdress) {
             query += ' WHERE '
 
             if (firstName) {
@@ -149,11 +150,28 @@ let controller = {
 
             if (lastName && firstName) {
                 query += ` AND lastName = '${lastName}'`
-                boolean = true
+                firstNameLastName = true
             }
 
-            if (lastName && boolean == false) {
+            if (lastName && firstNameLastName == false) {
                 query += `lastName = '${lastName}'`
+            }
+
+            if (street) {
+                query += `street = '${street}'`
+            }
+
+            if (city && street) {
+                query += ` AND city = '${city}'`
+                streetCity = true
+            }
+
+            if (city && streetCity == false) {
+                query += `city = '${city}'`
+            }
+
+            if (emailAdress) {
+                query += `emailAdress = '${emailAdress}'`
             }
         }
 
