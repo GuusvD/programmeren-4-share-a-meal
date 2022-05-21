@@ -15,7 +15,10 @@ let controller = {
             assert(typeof city === "string", "City must be a string!")
             assert(typeof password === "string", "Password must be a string!")
             assert(typeof emailAdress === "string", "Emailadress must be a string!")
+            //Checks if email contains @ character and dots at the right places
             assert(emailAdress.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/), "Emailadress is not valid!")
+            //At least one digit, at least one lower case, at least one upper case and at least 8 characters
+            assert(password.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/), "Password is not strong enough!")
 
             next()
         } catch (error) {
@@ -28,11 +31,14 @@ let controller = {
     },
     validateUserUpdate: (req, res, next) => {
         let user = req.body
-        let { emailAdress } = user
+        let { emailAdress, password } = user
 
         try {
             assert(typeof emailAdress === "string", "Emailadress must be a string!")
+            //Checks if email contains @ character and dots at the right places
             assert(emailAdress.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/), "Emailadress is not valid!")
+            //At least one digit, at least one lower case, at least one upper case and at least 8 characters
+            assert(password.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/), "Password is not strong enough!")
 
             next()
         } catch (error) {
