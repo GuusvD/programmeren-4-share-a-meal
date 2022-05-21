@@ -6,7 +6,7 @@ let id
 let controller = {
     validateUserInsert: (req, res, next) => {
         let user = req.body
-        let { firstName, lastName, street, city, password, emailAdress } = user
+        let { firstName, lastName, street, city, password, emailAdress, phoneNumber } = user
 
         try {
             assert(typeof firstName === "string", "Firstname must be a string!")
@@ -15,6 +15,7 @@ let controller = {
             assert(typeof city === "string", "City must be a string!")
             assert(typeof password === "string", "Password must be a string!")
             assert(typeof emailAdress === "string", "Emailadress must be a string!")
+            assert(typeof phoneNumber === "string", "Phonenumber must be a string!")
             //Checks if email contains @ character and dots at the right places
             assert(emailAdress.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/), "Emailadress is not valid!")
             //At least one digit, at least one lower case, at least one upper case and at least 8 characters
@@ -31,14 +32,12 @@ let controller = {
     },
     validateUserUpdate: (req, res, next) => {
         let user = req.body
-        let { emailAdress, password } = user
+        let { emailAdress } = user
 
         try {
             assert(typeof emailAdress === "string", "Emailadress must be a string!")
             //Checks if email contains @ character and dots at the right places
             assert(emailAdress.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/), "Emailadress is not valid!")
-            //At least one digit, at least one lower case, at least one upper case and at least 8 characters
-            assert(password.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/), "Password is not strong enough!")
 
             next()
         } catch (error) {
@@ -94,7 +93,7 @@ let controller = {
                             dbconnection.getConnection(function (err, connection) {
                                 if (err) throw err
 
-                                connection.query(`INSERT INTO user (id, firstName, lastName, street, city, password, emailAdress) VALUES ('${user.id}', '${user.firstName}', '${user.lastName}', '${user.street}', '${user.city}', '${user.password}', '${user.emailAdress}')`, function (error, results, fields) {
+                                connection.query(`INSERT INTO user (id, firstName, lastName, street, city, password, emailAdress, phoneNumber) VALUES ('${user.id}', '${user.firstName}', '${user.lastName}', '${user.street}', '${user.city}', '${user.password}', '${user.emailAdress}', '${user.phoneNumber}')`, function (error, results, fields) {
                                     connection.release()
 
                                     if (error) throw error
@@ -219,6 +218,12 @@ let controller = {
                         message: `User does not exist`
                     })
                 } else {
+                    if (results[0].isActive == 1) {
+                        results[0].isActive = true
+                    } else {
+                        results[0].isActive = false
+                    }
+
                     res.status(200).json({
                         status: 200,
                         result: results[0]
@@ -296,7 +301,7 @@ let controller = {
                             dbconnection.getConnection(function (err, connection) {
                                 if (err) throw err
 
-                                connection.query(`UPDATE user SET firstName = '${user.firstName}', lastName = '${user.lastName}', emailAdress = '${user.emailAdress}', password = '${user.password}', street = '${user.street}', city = '${user.city}' WHERE id = ${id}`, function (error, results, fields) {
+                                connection.query(`UPDATE user SET firstName = '${user.firstName}', lastName = '${user.lastName}', emailAdress = '${user.emailAdress}', password = '${user.password}', street = '${user.street}', city = '${user.city}', phoneNumber = '${user.phoneNumber}' WHERE id = ${id}`, function (error, results, fields) {
                                     connection.release()
 
                                     if (error) throw error
