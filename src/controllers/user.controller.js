@@ -1,6 +1,5 @@
 const assert = require('assert')
 const dbconnection = require('../../database/dbconnection')
-const MailChecker = require('mailchecker')
 
 let id
 
@@ -16,7 +15,7 @@ let controller = {
             assert(typeof city === "string", "City must be a string!")
             assert(typeof password === "string", "Password must be a string!")
             assert(typeof emailAdress === "string", "Emailadress must be a string!")
-            assert(MailChecker.isValid(emailAdress), "Emailadress is not valid!")
+            assert(emailAdress.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/), "Emailadress is not valid!")
 
             next()
         } catch (error) {
@@ -33,7 +32,7 @@ let controller = {
 
         try {
             assert(typeof emailAdress === "string", "Emailadress must be a string!")
-            assert(MailChecker.isValid(emailAdress), "Emailadress is not valid!")
+            assert(emailAdress.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/), "Emailadress is not valid!")
 
             next()
         } catch (error) {
