@@ -8,7 +8,7 @@ module.exports = {
     login(req, res, next) {
         dbconnection.getConnection((err, connection) => {
             if (err) {
-                res.status(500).json({
+                return next({
                     status: 500,
                     message: err.toString()
                 })
@@ -17,7 +17,7 @@ module.exports = {
                 connection.query("SELECT id, emailAdress, password, firstName, lastName FROM user WHERE emailAdress = ?", [req.body.emailAdress], (err, rows, fields) => {
                     connection.release()
                     if (err) {
-                        res.status(500).json({
+                        return next({
                             status: 500,
                             message: err.toString()
                         })
@@ -36,9 +36,9 @@ module.exports = {
                                 })
                             })
                         } else {
-                            res.status(404).json({
+                            return next({
                                 status: 404,
-                                message: "User not found or password invalid!",
+                                message: "User not found or password invalid!"
                             })
                         }
                     }
@@ -53,28 +53,27 @@ module.exports = {
 
             next()
         } catch (err) {
-            const errorFinal = {
+            return next({
                 status: 400,
                 message: err.message
-            }
-            next(errorFinal)
+            })
         }
     },
     validateToken(req, res, next) {
         const authHeader = req.headers.authorization
         if (!authHeader) {
-            res.status(401).json({
+            return next({
                 status: 401,
-                message: "Unauthorized",
+                message: "Unauthorized"
             })
         } else {
             const token = authHeader.substring(7, authHeader.length)
 
             jwt.verify(token, jwtSecretKey, (err, payload) => {
                 if (err) {
-                    res.status(401).json({
+                    return next({
                         status: 401,
-                        message: "Invalid token!",
+                        message: "Invalid token!"
                     })
                 }
                 if (payload) {

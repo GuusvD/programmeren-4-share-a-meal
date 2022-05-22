@@ -25,11 +25,10 @@ let controller = {
 
             next()
         } catch (error) {
-            const errorFinal = {
+            return next({
                 status: 400,
                 message: error.message
-            }
-            next(errorFinal)
+            })
         }
     },
     validateUserUpdate: (req, res, next) => {
@@ -55,14 +54,13 @@ let controller = {
 
             next()
         } catch (error) {
-            const errorFinal = {
+            return next({
                 status: 400,
                 message: error.message
-            }
-            next(errorFinal)
+            })
         }
     },
-    addUser: (req, res) => {
+    addUser: (req, res, next) => {
         let user = req.body
         let boolean = false
 
@@ -139,7 +137,7 @@ let controller = {
                         })
                     })
                 } else {
-                    res.status(409).json({
+                    return next({
                         status: 409,
                         message: 'Emailadress already taken'
                     })
@@ -226,7 +224,7 @@ let controller = {
             if (count > 2) {
                 return next({
                     status: 400,
-                    message: "Only 2 filter parameters allowed!",
+                    message: "Only 2 filter parameters allowed!"
                 })
             }
         }
@@ -254,7 +252,7 @@ let controller = {
             })
         })
     },
-    getUserById: (req, res) => {
+    getUserById: (req, res, next) => {
         const id = req.params.id
 
         dbconnection.getConnection(function (err, connection) {
@@ -266,9 +264,9 @@ let controller = {
                 if (error) throw error
 
                 if (results.length == 0) {
-                    res.status(404).json({
+                    return next({
                         status: 404,
-                        message: `User does not exist`
+                        message: "User does not exist"
                     })
                 } else {
                     if (results[0].isActive == 1) {
@@ -311,7 +309,7 @@ let controller = {
             })
         })
     },
-    updateUser: (req, res) => {
+    updateUser: (req, res, next) => {
         const id = req.params.id
         let existingId = false
         let uniqueEmail = true
@@ -373,17 +371,17 @@ let controller = {
                             })
                         } else {
                             if (Object.keys(req.body).length === 0) {
-                                res.status(400).json({
+                                return next({
                                     status: 400,
                                     message: "No saveable user data"
                                 })
                             } else if (existingId == false) {
-                                res.status(400).json({
+                                return next({
                                     status: 400,
-                                    message: `User does not exist`
+                                    message: "User does not exist"
                                 })
                             } else if (uniqueEmail == false) {
-                                res.status(409).json({
+                                return next({
                                     status: 409,
                                     message: "Emailadress already taken"
                                 })
@@ -394,7 +392,7 @@ let controller = {
             })
         })
     },
-    deleteUser: (req, res) => {
+    deleteUser: (req, res, next) => {
         const id = req.params.id
         let existingId = false
 
@@ -429,15 +427,15 @@ let controller = {
                             })
                         })
                     } else {
-                        res.status(403).json({
+                        return next({
                             status: 403,
-                            message: `Can not delete other users`
+                            message: "Can not delete other users"
                         })
                     }
                 } else {
-                    res.status(400).json({
+                    return next({
                         status: 400,
-                        message: `User does not exist`
+                        message: "User does not exist"
                     })
                 }
             })

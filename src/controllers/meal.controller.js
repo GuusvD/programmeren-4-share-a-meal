@@ -23,11 +23,10 @@ let controller = {
 
             next()
         } catch (error) {
-            const errorFinal = {
+            return next({
                 status: 400,
                 message: error.message
-            }
-            next(errorFinal)
+            })
         }
     },
     addMeal: (req, res) => {
@@ -232,7 +231,7 @@ let controller = {
             })
         })
     },
-    getMealById: (req, res) => {
+    getMealById: (req, res, next) => {
         const id = req.params.id
         let participants = []
 
@@ -336,7 +335,7 @@ let controller = {
                         })
                     })
                 } else {
-                    res.status(404).json({
+                    return next({
                         status: 404,
                         message: "Meal does not exist"
                     })
@@ -344,7 +343,7 @@ let controller = {
             })
         })
     },
-    deleteMeal: (req, res) => {
+    deleteMeal: (req, res, next) => {
         const id = req.params.id
         let existingId = false
 
@@ -387,15 +386,15 @@ let controller = {
                                     })
                                 })
                             } else {
-                                res.status(403).json({
+                                return next({
                                     status: 403,
                                     message: "Can not delete meals created by other users"
                                 })
                             }
                         } else {
-                            res.status(404).json({
+                            return next({
                                 status: 404,
-                                message: `Meal does not exist`
+                                message: "Meal does not exist"
                             })
                         }
                     })
