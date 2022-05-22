@@ -1,13 +1,12 @@
 const assert = require('assert')
 const dbconnection = require('../../database/dbconnection')
-const MailChecker = require('mailchecker')
 
 let id
 
 let controller = {
     validateUserInsert: (req, res, next) => {
         let user = req.body
-        let { firstName, lastName, street, city, password, emailAdress } = user
+        let { firstName, lastName, street, city, password, emailAdress, phoneNumber } = user
 
         try {
             assert(typeof firstName === "string", "Firstname must be a string!")
@@ -16,35 +15,52 @@ let controller = {
             assert(typeof city === "string", "City must be a string!")
             assert(typeof password === "string", "Password must be a string!")
             assert(typeof emailAdress === "string", "Emailadress must be a string!")
-            assert(MailChecker.isValid(emailAdress), "Emailadress is not valid!")
+            assert(typeof phoneNumber === "string", "Phonenumber must be a string!")
+            //Checks if email contains @ character and dots at the right places
+            assert(emailAdress.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/), "Emailadress is not valid!")
+            //At least one digit, at least one lower case, at least one upper case and at least 8 characters
+            assert(password.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/), "Password is not strong enough!")
+            //Checks if phonenumber starts with 06 and has 8 more numbers after that
+            assert(phoneNumber.match(/^06[0-9]{8}$/), "Phonenumber is not valid!")
 
             next()
         } catch (error) {
-            const errorFinal = {
+            return next({
                 status: 400,
                 message: error.message
-            }
-            next(errorFinal)
+            })
         }
     },
     validateUserUpdate: (req, res, next) => {
         let user = req.body
-        let { emailAdress } = user
+        let { emailAdress, password, phoneNumber } = user
 
         try {
             assert(typeof emailAdress === "string", "Emailadress must be a string!")
-            assert(MailChecker.isValid(emailAdress), "Emailadress is not valid!")
+            //Checks if email contains @ character and dots at the right places
+            assert(emailAdress.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/), "Emailadress is not valid!")
+
+            if (password) {
+                assert(typeof password === "string", "Password must be a string!")
+                //At least one digit, at least one lower case, at least one upper case and at least 8 characters
+                assert(password.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/), "Password is not strong enough!")
+            }
+
+            if (phoneNumber) {
+                assert(typeof phoneNumber === "string", "Phonenumber must be a string!")
+                //Checks if phonenumber starts with 06 and has 8 more numbers after that
+                assert(phoneNumber.match(/^06[0-9]{8}$/), "Phonenumber is not valid!")
+            }
 
             next()
         } catch (error) {
-            const errorFinal = {
+            return next({
                 status: 400,
                 message: error.message
-            }
-            next(errorFinal)
+            })
         }
     },
-    addUser: (req, res) => {
+    addUser: (req, res, next) => {
         let user = req.body
         let boolean = false
 
@@ -89,7 +105,7 @@ let controller = {
                             dbconnection.getConnection(function (err, connection) {
                                 if (err) throw err
 
-                                connection.query(`INSERT INTO user (id, firstName, lastName, street, city, password, emailAdress) VALUES ('${user.id}', '${user.firstName}', '${user.lastName}', '${user.street}', '${user.city}', '${user.password}', '${user.emailAdress}')`, function (error, results, fields) {
+                                connection.query(`INSERT INTO user (id, firstName, lastName, street, city, password, emailAdress, phoneNumber) VALUES ('${user.id}', '${user.firstName}', '${user.lastName}', '${user.street}', '${user.city}', '${user.password}', '${user.emailAdress}', '${user.phoneNumber}')`, function (error, results, fields) {
                                     connection.release()
 
                                     if (error) throw error
@@ -121,7 +137,7 @@ let controller = {
                         })
                     })
                 } else {
-                    res.status(409).json({
+                    return next({
                         status: 409,
                         message: 'Emailadress already taken'
                     })
@@ -129,32 +145,89 @@ let controller = {
             })
         })
     },
-    getAllUsers: (req, res) => {
-        //
-        const { firstName, lastName } = req.query
-        let query = 'SELECT * FROM user'
-        let boolean = false
+    getAllUsers: (req, res, next) => {
+        let { isActive, firstName, lastName, emailAdress, street, city, phoneNumber, limit } = req.query
 
-        if (firstName || lastName) {
-            query += ' WHERE '
+        let query = "SELECT * FROM user"
+
+        if (isActive || firstName || lastName || emailAdress || street || city || phoneNumber || limit) {
+            let count = 0
+
+            if (isActive || firstName || lastName || emailAdress || street || city || phoneNumber) {
+                query += " WHERE "
+            }
+
+            if (isActive) {
+                if (isActive == true) {
+                    isActive = 1
+                } else if (isActive == false) {
+                    isActive = 0
+                }
+
+                query += `isActive = ${isActive}`
+                count++
+            }
 
             if (firstName) {
+                if (count === 1) {
+                    query += " AND "
+                }
+                count++
                 query += `firstName = '${firstName}'`
             }
 
-            if (lastName && firstName) {
-                query += ` AND lastName = '${lastName}'`
-                boolean = true
-            }
-
-            if (lastName && boolean == false) {
+            if (lastName) {
+                if (count === 1) {
+                    query += " AND "
+                }
+                count++
                 query += `lastName = '${lastName}'`
             }
-        }
 
-        query += ';'
-        console.log(query)
-        //
+            if (emailAdress) {
+                if (count === 1) {
+                    query += " AND "
+                }
+                count++
+                query += `emailAdress = '${emailAdress}'`
+            }
+
+            if (street) {
+                if (count === 1) {
+                    query += " AND "
+                }
+                count++
+                query += `street = '${street}'`
+            }
+
+            if (city) {
+                if (count === 1) {
+                    query += " AND "
+                }
+                count++
+                query += `city = '${city}'`
+            }
+
+            if (phoneNumber) {
+                if (count === 1) {
+                    query += " AND "
+                }
+                count++
+                query += `phoneNumber = '${phoneNumber}'`
+            }
+
+            if (limit) {
+                count++
+                query += ` LIMIT ${limit}`
+            }
+
+            if (count > 2) {
+                return next({
+                    status: 400,
+                    message: "Only 2 filter parameters allowed!"
+                })
+            }
+        }
 
         dbconnection.getConnection(function (err, connection) {
             if (err) throw err
@@ -164,6 +237,14 @@ let controller = {
 
                 if (error) throw error
 
+                results.forEach(element => {
+                    if (element.isActive == 1) {
+                        element.isActive = true
+                    } else {
+                        element.isActive = false
+                    }
+                })
+
                 res.status(200).json({
                     status: 200,
                     result: results
@@ -171,7 +252,7 @@ let controller = {
             })
         })
     },
-    getUserById: (req, res) => {
+    getUserById: (req, res, next) => {
         const id = req.params.id
 
         dbconnection.getConnection(function (err, connection) {
@@ -183,11 +264,17 @@ let controller = {
                 if (error) throw error
 
                 if (results.length == 0) {
-                    res.status(404).json({
+                    return next({
                         status: 404,
-                        message: `User does not exist`
+                        message: "User does not exist"
                     })
                 } else {
+                    if (results[0].isActive == 1) {
+                        results[0].isActive = true
+                    } else {
+                        results[0].isActive = false
+                    }
+
                     res.status(200).json({
                         status: 200,
                         result: results[0]
@@ -197,12 +284,32 @@ let controller = {
         })
     },
     getUserProfile: (req, res) => {
-        res.status(501).json({
-            status: 501,
-            message: 'This function has not been implemented yet'
+        const id = req.userId
+
+        dbconnection.getConnection(function (err, connection) {
+            if (err) throw err
+
+            connection.query(`SELECT * FROM user WHERE id = ${id}`, function (error, results, fields) {
+                connection.release()
+
+                if (err) throw err
+
+                let user = results[0]
+
+                if (user.isActive == 1) {
+                    user.isActive = true
+                } else {
+                    user.isActive = false
+                }
+
+                res.status(200).json({
+                    status: 200,
+                    result: user
+                })
+            })
         })
     },
-    updateUser: (req, res) => {
+    updateUser: (req, res, next) => {
         const id = req.params.id
         let existingId = false
         let uniqueEmail = true
@@ -245,10 +352,16 @@ let controller = {
                             dbconnection.getConnection(function (err, connection) {
                                 if (err) throw err
 
-                                connection.query(`UPDATE user SET firstName = '${user.firstName}', lastName = '${user.lastName}', emailAdress = '${user.emailAdress}', password = '${user.password}', street = '${user.street}', city = '${user.city}' WHERE id = ${id}`, function (error, results, fields) {
+                                connection.query(`UPDATE user SET firstName = '${user.firstName}', lastName = '${user.lastName}', emailAdress = '${user.emailAdress}', password = '${user.password}', street = '${user.street}', city = '${user.city}', phoneNumber = '${user.phoneNumber}', isActive = ${user.isActive} WHERE id = ${id}`, function (error, results, fields) {
                                     connection.release()
 
                                     if (error) throw error
+
+                                    if (user.isActive == 0) {
+                                        user.isActive = false
+                                    } else {
+                                        user.isActive = true
+                                    }
 
                                     res.status(200).json({
                                         status: 200,
@@ -258,17 +371,17 @@ let controller = {
                             })
                         } else {
                             if (Object.keys(req.body).length === 0) {
-                                res.status(400).json({
+                                return next({
                                     status: 400,
                                     message: "No saveable user data"
                                 })
                             } else if (existingId == false) {
-                                res.status(400).json({
+                                return next({
                                     status: 400,
-                                    message: `User does not exist`
+                                    message: "User does not exist"
                                 })
                             } else if (uniqueEmail == false) {
-                                res.status(409).json({
+                                return next({
                                     status: 409,
                                     message: "Emailadress already taken"
                                 })
@@ -279,7 +392,7 @@ let controller = {
             })
         })
     },
-    deleteUser: (req, res) => {
+    deleteUser: (req, res, next) => {
         const id = req.params.id
         let existingId = false
 
@@ -298,24 +411,31 @@ let controller = {
                 })
 
                 if (existingId == true) {
-                    dbconnection.getConnection(function (err, connection) {
-                        if (err) throw err
+                    if (req.userId == id) {
+                        dbconnection.getConnection(function (err, connection) {
+                            if (err) throw err
 
-                        connection.query(`DELETE FROM user WHERE id = ${id}`, function (error, results, fields) {
-                            connection.release()
+                            connection.query(`DELETE FROM user WHERE id = ${id}`, function (error, results, fields) {
+                                connection.release()
 
-                            if (error) throw error
+                                if (error) throw error
 
-                            res.status(200).json({
-                                status: 200,
-                                message: "User succesfully deleted"
+                                res.status(200).json({
+                                    status: 200,
+                                    message: "User succesfully deleted"
+                                })
                             })
                         })
-                    })
+                    } else {
+                        return next({
+                            status: 403,
+                            message: "Can not delete other users"
+                        })
+                    }
                 } else {
-                    res.status(400).json({
+                    return next({
                         status: 400,
-                        message: `User does not exist`
+                        message: "User does not exist"
                     })
                 }
             })

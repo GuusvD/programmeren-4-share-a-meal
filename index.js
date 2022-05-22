@@ -36,9 +36,9 @@ app.all('/api/user/undefined', (req, res) => {
 
 //Error handling
 app.use((err, req, res, next) => {
-  res.status(500).json({
-    status: 500,
-    message: err.toString()
+  res.status(err.status).json({
+    status: err.status,
+    message: err.message
   })
 })
 

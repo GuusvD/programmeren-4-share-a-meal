@@ -8,7 +8,7 @@ module.exports = {
     login(req, res, next) {
         dbconnection.getConnection((err, connection) => {
             if (err) {
-                res.status(500).json({
+                return next({
                     status: 500,
                     message: err.toString()
                 })
@@ -17,7 +17,7 @@ module.exports = {
                 connection.query("SELECT id, emailAdress, password, firstName, lastName FROM user WHERE emailAdress = ?", [req.body.emailAdress], (err, rows, fields) => {
                     connection.release()
                     if (err) {
-                        res.status(500).json({
+                        return next({
                             status: 500,
                             message: err.toString()
                         })
@@ -29,16 +29,16 @@ module.exports = {
                                 userId: userinfo.id,
                             }
 
-                            jwt.sign(payload, jwtSecretKey, { expiresIn: "1h" }, function (err, token) {
+                            jwt.sign(payload, jwtSecretKey, { expiresIn: "24h" }, function (err, token) {
                                 res.status(200).json({
                                     status: 200,
                                     result: { ...userinfo, token },
                                 })
                             })
                         } else {
-                            res.status(404).json({
+                            return next({
                                 status: 404,
-                                message: "User not found or password invalid!",
+                                message: "User not found or password invalid!"
                             })
                         }
                     }
@@ -50,29 +50,30 @@ module.exports = {
         try {
             assert(typeof req.body.emailAdress === "string", "Emailadress must be a string!")
             assert(typeof req.body.password === "string", "Password must be a string!")
+
             next()
         } catch (err) {
-            res.status(400).json({
+            return next({
                 status: 400,
-                message: err.toString(),
+                message: err.message
             })
         }
     },
     validateToken(req, res, next) {
         const authHeader = req.headers.authorization
         if (!authHeader) {
-            res.status(401).json({
+            return next({
                 status: 401,
-                message: "Authorization header missing!",
+                message: "Unauthorized"
             })
         } else {
             const token = authHeader.substring(7, authHeader.length)
 
             jwt.verify(token, jwtSecretKey, (err, payload) => {
                 if (err) {
-                    res.status(401).json({
+                    return next({
                         status: 401,
-                        message: "Invalid token!",
+                        message: "Invalid token!"
                     })
                 }
                 if (payload) {
