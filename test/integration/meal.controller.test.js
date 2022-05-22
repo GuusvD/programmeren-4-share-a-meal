@@ -183,7 +183,7 @@ describe('Manage meals', () => {
                     result.isVega.should.be.a('boolean').that.equals(false)
                     result.isVegan.should.be.a('boolean').that.equals(false)
                     result.isToTakeHome.should.be.a('boolean').that.equals(true)
-                    result.dateTime.should.be.a('string').that.equals('2022-03-22T16:35:00.000Z')
+                    result.dateTime.should.be.a('string')
                     result.imageUrl.should.be.a('string').that.equals('https://miljuschka.nl/wp-content/uploads/2021/02/Pasta-bolognese-3-2.jpg')
                     result.allergenes.should.be.a('string').that.equals('gluten,lactose')
                     result.maxAmountOfParticipants.should.be.a('number').that.equals(4)
