@@ -50,12 +50,14 @@ module.exports = {
         try {
             assert(typeof req.body.emailAdress === "string", "Emailadress must be a string!")
             assert(typeof req.body.password === "string", "Password must be a string!")
+
             next()
         } catch (err) {
-            res.status(400).json({
+            const errorFinal = {
                 status: 400,
-                message: err.toString(),
-            })
+                message: err.message
+            }
+            next(errorFinal)
         }
     },
     validateToken(req, res, next) {
@@ -63,7 +65,7 @@ module.exports = {
         if (!authHeader) {
             res.status(401).json({
                 status: 401,
-                message: "Authorization header missing!",
+                message: "Unauthorized",
             })
         } else {
             const token = authHeader.substring(7, authHeader.length)

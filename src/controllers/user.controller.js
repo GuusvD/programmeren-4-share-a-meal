@@ -34,12 +34,24 @@ let controller = {
     },
     validateUserUpdate: (req, res, next) => {
         let user = req.body
-        let { emailAdress } = user
+        let { emailAdress, password, phoneNumber } = user
 
         try {
             assert(typeof emailAdress === "string", "Emailadress must be a string!")
             //Checks if email contains @ character and dots at the right places
             assert(emailAdress.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/), "Emailadress is not valid!")
+
+            if (password) {
+                assert(typeof password === "string", "Password must be a string!")
+                //At least one digit, at least one lower case, at least one upper case and at least 8 characters
+                assert(password.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/), "Password is not strong enough!")
+            }
+
+            if (phoneNumber) {
+                assert(typeof phoneNumber === "string", "Phonenumber must be a string!")
+                //Checks if phonenumber starts with 06 and has 8 more numbers after that
+                assert(phoneNumber.match(/^06[0-9]{8}$/), "Phonenumber is not valid!")
+            }
 
             next()
         } catch (error) {
@@ -136,11 +148,11 @@ let controller = {
         })
     },
     getAllUsers: (req, res, next) => {
-        let { isActive, firstName, lastName, emailAdress, street, city, phoneNumber } = req.query
+        let { isActive, firstName, lastName, emailAdress, street, city, phoneNumber, limit } = req.query
 
         let query = "SELECT * FROM user"
 
-        if (isActive || firstName || lastName || emailAdress || street || city || phoneNumber) {
+        if (isActive || firstName || lastName || emailAdress || street || city || phoneNumber || limit) {
             let count = 0
 
             if (isActive || firstName || lastName || emailAdress || street || city || phoneNumber) {
@@ -204,6 +216,11 @@ let controller = {
                 }
                 count++
                 query += `phoneNumber = '${phoneNumber}'`
+            }
+
+            if (limit) {
+                count++
+                query += ` LIMIT ${limit}`
             }
 
             if (count > 2) {
@@ -337,7 +354,7 @@ let controller = {
                             dbconnection.getConnection(function (err, connection) {
                                 if (err) throw err
 
-                                connection.query(`UPDATE user SET firstName = '${user.firstName}', lastName = '${user.lastName}', emailAdress = '${user.emailAdress}', password = '${user.password}', street = '${user.street}', city = '${user.city}', phoneNumber = '${user.phoneNumber}' WHERE id = ${id}`, function (error, results, fields) {
+                                connection.query(`UPDATE user SET firstName = '${user.firstName}', lastName = '${user.lastName}', emailAdress = '${user.emailAdress}', password = '${user.password}', street = '${user.street}', city = '${user.city}', phoneNumber = '${user.phoneNumber}', isActive = ${user.isActive} WHERE id = ${id}`, function (error, results, fields) {
                                     connection.release()
 
                                     if (error) throw error
@@ -396,20 +413,27 @@ let controller = {
                 })
 
                 if (existingId == true) {
-                    dbconnection.getConnection(function (err, connection) {
-                        if (err) throw err
+                    if (req.userId == id) {
+                        dbconnection.getConnection(function (err, connection) {
+                            if (err) throw err
 
-                        connection.query(`DELETE FROM user WHERE id = ${id}`, function (error, results, fields) {
-                            connection.release()
+                            connection.query(`DELETE FROM user WHERE id = ${id}`, function (error, results, fields) {
+                                connection.release()
 
-                            if (error) throw error
+                                if (error) throw error
 
-                            res.status(200).json({
-                                status: 200,
-                                message: "User succesfully deleted"
+                                res.status(200).json({
+                                    status: 200,
+                                    message: "User succesfully deleted"
+                                })
                             })
                         })
-                    })
+                    } else {
+                        res.status(403).json({
+                            status: 403,
+                            message: `Can not delete other users`
+                        })
+                    }
                 } else {
                     res.status(400).json({
                         status: 400,

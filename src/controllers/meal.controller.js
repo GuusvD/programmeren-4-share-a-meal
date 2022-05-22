@@ -6,7 +6,7 @@ let id
 let controller = {
     validateMealInsert: (req, res, next) => {
         let meal = req.body
-        let { isVega, isVegan, isToTakeHome, dateTime, maxAmountOfParticipants, price, imageUrl, name, description, allergenes } = meal
+        let { isVega, isVegan, isToTakeHome, dateTime, maxAmountOfParticipants, price, imageUrl, name, description, allergenes, isActive } = meal
 
         try {
             assert(typeof isVega === 'boolean', 'IsVega must be a boolean!')
@@ -19,6 +19,7 @@ let controller = {
             assert(typeof name === 'string', 'Name must be a string!')
             assert(typeof description === 'string', 'Description must be a string!')
             assert(typeof allergenes === 'object', 'Allergenes must be a object!')
+            assert(typeof isActive === 'boolean', 'IsActive must be a boolean!')
 
             next()
         } catch (error) {
@@ -58,7 +59,7 @@ let controller = {
                 dbconnection.getConnection(function (err, connection) {
                     if (err) throw err
 
-                    connection.query(`INSERT INTO meal (id, isActive, isVega, isVegan, isToTakeHome, dateTime, maxAmountOfParticipants, price, imageUrl, cookId, name, description, allergenes) VALUES (${id}, ${1}, ${meal.isVega}, ${meal.isVegan}, ${meal.isToTakeHome}, '${meal.dateTime}', ${meal.maxAmountOfParticipants}, ${meal.price}, '${meal.imageUrl}', ${req.userId}, '${meal.name}', '${meal.description}', '${meal.allergenes}')`, function (error, results, fields) {
+                    connection.query(`INSERT INTO meal (id, isActive, isVega, isVegan, isToTakeHome, dateTime, maxAmountOfParticipants, price, imageUrl, cookId, name, description, allergenes) VALUES (${id}, ${meal.isActive}, ${meal.isVega}, ${meal.isVegan}, ${meal.isToTakeHome}, '${meal.dateTime}', ${meal.maxAmountOfParticipants}, ${meal.price}, '${meal.imageUrl}', ${req.userId}, '${meal.name}', '${meal.description}', '${meal.allergenes}')`, function (error, results, fields) {
                         connection.release()
 
                         if (error) throw error
@@ -245,58 +246,101 @@ let controller = {
 
                 meal = meal[0]
 
-                dbconnection.getConnection(function (err, connection) {
-                    if (err) throw err
+                if (meal) {
+                    if (meal.isActive == 1) {
+                        meal.isActive = true
+                    } else {
+                        meal.isActive = false
+                    }
 
-                    connection.query(`SELECT * FROM meal_participants_user WHERE mealId = ${id}`, function (error, participantsResult, fields) {
-                        connection.release
+                    if (meal.isVega == 0) {
+                        meal.isVega = false
+                    } else {
+                        meal.isVega = true
+                    }
 
+                    if (meal.isVegan == 0) {
+                        meal.isVegan = false
+                    } else {
+                        meal.isVegan = true
+                    }
+
+                    if (meal.isToTakeHome == 0) {
+                        meal.isToTakeHome = false
+                    } else {
+                        meal.isToTakeHome = true
+                    }
+
+                    dbconnection.getConnection(function (err, connection) {
                         if (err) throw err
 
-                        dbconnection.getConnection(function (err, connection) {
+                        connection.query(`SELECT * FROM meal_participants_user WHERE mealId = ${id}`, function (error, participantsResult, fields) {
+                            connection.release
+
                             if (err) throw err
 
-                            connection.query(`SELECT * FROM user`, function (error, users, fields) {
-                                connection.release
+                            dbconnection.getConnection(function (err, connection) {
+                                if (err) throw err
 
-                                dbconnection.getConnection(function (err, connection) {
-                                    if (err) throw err
+                                connection.query(`SELECT * FROM user`, function (error, users, fields) {
+                                    connection.release
 
-                                    connection.query(`SELECT * FROM user WHERE id = ${meal.cookId}`, function (error, cook, fields) {
-                                        connection.release
-
+                                    dbconnection.getConnection(function (err, connection) {
                                         if (err) throw err
 
-                                        delete meal.cookId
+                                        connection.query(`SELECT * FROM user WHERE id = ${meal.cookId}`, function (error, cook, fields) {
+                                            connection.release
 
-                                        meal = {
-                                            ...meal,
-                                            cook: cook[0]
-                                        }
+                                            if (err) throw err
 
-                                        participantsResult.forEach(participant => {
-                                            users.forEach(user => {
-                                                if (user.id == participant.userId) {
-                                                    participants.push(user)
-                                                }
+                                            delete meal.cookId
+
+                                            if (cook[0].isActive == 1) {
+                                                cook[0].isActive = true
+                                            } else {
+                                                cook[0].isActive = false
+                                            }
+
+                                            meal = {
+                                                ...meal,
+                                                cook: cook[0]
+                                            }
+
+                                            participantsResult.forEach(participant => {
+                                                users.forEach(user => {
+                                                    if (user.id == participant.userId) {
+                                                        if (user.isActive == 1) {
+                                                            user.isActive = true
+                                                        } else {
+                                                            user.isActive = false
+                                                        }
+
+                                                        participants.push(user)
+                                                    }
+                                                })
                                             })
-                                        })
 
-                                        meal = {
-                                            ...meal,
-                                            participants
-                                        }
+                                            meal = {
+                                                ...meal,
+                                                participants
+                                            }
 
-                                        res.status(200).json({
-                                            status: 200,
-                                            result: meal
+                                            res.status(200).json({
+                                                status: 200,
+                                                result: meal
+                                            })
                                         })
                                     })
                                 })
                             })
                         })
                     })
-                })
+                } else {
+                    res.status(404).json({
+                        status: 404,
+                        message: "Meal does not exist"
+                    })
+                }
             })
         })
     },
@@ -318,27 +362,44 @@ let controller = {
                     }
                 })
 
-                if (existingId == true) {
-                    dbconnection.getConnection(function (err, connection) {
-                        if (err) throw err
+                dbconnection.getConnection(function (err, connection) {
+                    if (err) throw err
 
-                        connection.query(`DELETE FROM meal WHERE id = ${id}`, function (error, results, fields) {
-                            connection.release()
+                    connection.query(`SELECT cookId FROM meal WHERE id = ${id}`, function (error, results, fields) {
+                        connection.release()
 
-                            if (error) throw error
+                        if (error) throw error
 
-                            res.status(200).json({
-                                status: 200,
-                                message: "Meal succesfully deleted"
+                        if (existingId == true) {
+                            if (results[0].cookId == req.userId) {
+                                dbconnection.getConnection(function (err, connection) {
+                                    if (err) throw err
+
+                                    connection.query(`DELETE FROM meal WHERE id = ${id}`, function (error, results, fields) {
+                                        connection.release()
+
+                                        if (error) throw error
+
+                                        res.status(200).json({
+                                            status: 200,
+                                            message: "Meal succesfully deleted"
+                                        })
+                                    })
+                                })
+                            } else {
+                                res.status(403).json({
+                                    status: 403,
+                                    message: "Can not delete meals created by other users"
+                                })
+                            }
+                        } else {
+                            res.status(404).json({
+                                status: 404,
+                                message: `Meal does not exist`
                             })
-                        })
+                        }
                     })
-                } else {
-                    res.status(400).json({
-                        status: 400,
-                        message: `Meal does not exist`
-                    })
-                }
+                })
             })
         })
     }
