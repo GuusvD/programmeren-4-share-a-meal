@@ -1,7 +1,7 @@
 
 # Share-A-Meal API
 
-This is an API created by Guus van Damme with Node.js and deployed with help of Heroku. The IDE used for creating this program is Visual Studio Code.
+This is an API created by Guus van Damme with [Node.js](https://nodejs.dev/) and deployed with help of [Heroku](https://www.heroku.com/what). The IDE used for creating this program is [Visual Studio Code](https://code.visualstudio.com/).
 
 
 
@@ -39,14 +39,14 @@ in some simple steps.
 
 #### Running locally on pc
 
-- Using XAMPP start a local MySql server.
+- Using [XAMPP](https://www.apachefriends.org/index.html) start a local MySql server.
 - Start the API by typing the following command while you are again in the project folder:
 
 ```bash
   node index.js
 ```
 
-- The API is now running locally! Send requests by visiting http://localhost:3000/ in your browser or by using Postman. Postman is an API platform for building and using APIs. You can get it here for Windows: https://www.postman.com/downloads/?utm_source=postman-home.
+- The API is now running locally! Send requests by visiting http://localhost:3000/ in your browser or by using [Postman](https://www.postman.com/). Postman is an API platform for building and using APIs. You can get it here for Windows: https://www.postman.com/downloads/?utm_source=postman-home.
 
 #### Online usage
 
