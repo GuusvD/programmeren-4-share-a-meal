@@ -55,10 +55,12 @@ let controller = {
                     ...meal
                 }
 
+                const date = new Date(meal.dateTime).toISOString().slice(0, 19).replace("T", " ");
+
                 dbconnection.getConnection(function (err, connection) {
                     if (err) throw err
 
-                    connection.query(`INSERT INTO meal (id, isActive, isVega, isVegan, isToTakeHome, dateTime, maxAmountOfParticipants, price, imageUrl, cookId, name, description, allergenes) VALUES (${id}, ${meal.isActive}, ${meal.isVega}, ${meal.isVegan}, ${meal.isToTakeHome}, '${meal.dateTime}', ${meal.maxAmountOfParticipants}, ${meal.price}, '${meal.imageUrl}', ${req.userId}, '${meal.name}', '${meal.description}', '${meal.allergenes}')`, function (error, results, fields) {
+                    connection.query(`INSERT INTO meal (id, isActive, isVega, isVegan, isToTakeHome, dateTime, maxAmountOfParticipants, price, imageUrl, cookId, name, description, allergenes) VALUES (${id}, ${meal.isActive}, ${meal.isVega}, ${meal.isVegan}, ${meal.isToTakeHome}, '${date}', ${meal.maxAmountOfParticipants}, ${meal.price}, '${meal.imageUrl}', ${req.userId}, '${meal.name}', '${meal.description}', '${meal.allergenes}')`, function (error, results, fields) {
                         connection.release()
 
                         if (error) throw error
